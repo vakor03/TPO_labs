@@ -10,13 +10,15 @@ public class Main {
         int[][] matrixB = GenerateRandomMatrix(2000, 2000);
 
 //        long startTime = System.currentTimeMillis();
-//        int[][] result = MatrixMultiplication.PerformSequentialAlgorithm(matrixA, matrixB);
+        int[][] result = MatrixMultiplication.PerformSequentialAlgorithm(matrixA, matrixB);
 //        long endTime = System.currentTimeMillis();
 //        System.out.println("Sequential algorithm took " + (endTime - startTime) + " milliseconds");
 //        System.out.println();
 //        PrintMatrix(result);
         for (int i = 20; i>=2; i--){
             CallBlockStripedDecompositionAlgorithm(matrixA, matrixB, i);
+            CallTapeAlgorithm(matrixA, matrixB, i);
+            System.out.println();
         }
 
 //        PrintMatrix(result2);
@@ -63,10 +65,17 @@ public class Main {
 
     private static void CallBlockStripedDecompositionAlgorithm(int[][] matrixA, int[][] matrixB, int numberOfThreads) {
         long startTime = System.currentTimeMillis();
-        int[][] result2 = new BlockStripedDecompositionAlgorithm().Multiply(matrixA, matrixB, 10);
+        int[][] result2 = new BlockStripedDecompositionAlgorithmOld().Multiply(matrixA, matrixB, 10);
         long endTime = System.currentTimeMillis();
-        System.out.println("Block-striped decomposition algorithm took " + (endTime - startTime) + " milliseconds with " + numberOfThreads + " threads");
+        System.out.println("Block-striped => " + (endTime - startTime) + " ms with " + numberOfThreads + " threads");
 //        System.out.println();
+    }
+
+    private static void CallTapeAlgorithm(int[][] matrixA, int[][] matrixB, int numberOfThreads) {
+        long startTime = System.currentTimeMillis();
+        int[][] result2 = new TapeMultiplicationAlgorithm().Multiply(matrixA, matrixB, 10);
+        long endTime = System.currentTimeMillis();
+        System.out.println("Tape => " + (endTime - startTime) + " ms with " + numberOfThreads + " threads");
     }
 }
 

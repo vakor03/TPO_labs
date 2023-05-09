@@ -1,13 +1,13 @@
 import java.util.HashSet;
 
-public class BlockStripedDecompositionAlgorithm {
+public class BlockStripedDecompositionAlgorithmOld {
     public int[][] Multiply(int[][] matrixA, int[][] matrixB, int numberOfThreads) {
         int[][] result = new int[matrixA.length][matrixB[0].length];
         HashSet<Thread> threads = new HashSet<>();
         for (int i = 0; i < numberOfThreads; i++) {
             int startRow = i * matrixA.length / numberOfThreads;
             int endRow = i == numberOfThreads - 1 ? matrixA.length : (i + 1) * matrixA.length / numberOfThreads;
-            Thread thread = new Thread(new BlockStripedDecompositionAlgorithmWorker(matrixA, matrixB, result, startRow, endRow));
+            Thread thread = new Thread(new BlockStripedDecompositionAlgorithmWorkerOld(matrixA, matrixB, result, startRow, endRow));
             thread.start();
             threads.add(thread);
         }
@@ -26,14 +26,14 @@ public class BlockStripedDecompositionAlgorithm {
     }
 }
 
-class BlockStripedDecompositionAlgorithmWorker implements Runnable {
+class BlockStripedDecompositionAlgorithmWorkerOld implements Runnable {
     private int[][] matrixA;
     private int[][] matrixB;
     private int[][] result;
     private int startRow;
     private int endRow;
 
-    public BlockStripedDecompositionAlgorithmWorker(int[][] matrixA,
+    public BlockStripedDecompositionAlgorithmWorkerOld(int[][] matrixA,
                                                     int[][] matrixB,
                                                     int[][] result,
                                                     int startRow,
