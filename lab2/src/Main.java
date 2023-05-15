@@ -1,4 +1,5 @@
 import java.util.Random;
+import java.util.concurrent.Future;
 
 // Press Shift twice to open the Search Everywhere dialog and type `show whitespaces`,
 // then press Enter. You can now see whitespace characters in your code.
@@ -6,29 +7,46 @@ public class Main {
     public static void main(String[] args) {
         int[][] matrixA = GenerateRandomMatrix(2000, 2000);
         int[][] matrixB = GenerateRandomMatrix(2000, 2000);
+//        int[][] matrixA = new int[][]{
+//                {1, 2, 3},
+//                {4, 5, 6},
+//                {7, 8 ,9}
+//        };
+//
+//        int[][] matrixB = new int[][]{
+//                {1, 2, 3},
+//                {4, 5, 6},
+//                {7, 8 ,9}
+//        };
+//
+//        var result = MatrixMultiplication.PerformSequentialAlgorithm(matrixA, matrixB);
+//        PrintMatrix(result);
+
+
 //        var result = MatrixMultiplication.PerformSequentialAlgorithm(matrixA, matrixB);
 //        var result2 = new StripeAlgorithm(8).multiply(matrixA, matrixB);
-//
-////        long startTime = System.currentTimeMillis();
-//        int[][] result = MatrixMultiplication.PerformSequentialAlgorithm(matrixA, matrixB);
-////        long endTime = System.currentTimeMillis();
-////        System.out.println("Sequential algorithm took " + (endTime - startTime) + " milliseconds");
-////        System.out.println();
-////        PrintMatrix(result);
-//        callSeqAlgorithm(matrixA, matrixB);
+//        System.out.println(MatricesAreIdentical(result, result2) ? "Matrices are identical" : "Matrices are not identical");
+////
+//////        long startTime = System.currentTimeMillis();
+////        int[][] result = MatrixMultiplication.PerformSequentialAlgorithm(matrixA, matrixB);
+//////        long endTime = System.currentTimeMillis();
+//////        System.out.println("Sequential algorithm took " + (endTime - startTime) + " milliseconds");
+//////        System.out.println();
+//////        PrintMatrix(result);
+////        callSeqAlgorithm(matrixA, matrixB);
         for (int i = 1; i <= 5; i++) {
             for (int j = 0; j < 5; j++) {
                 callStripeAlgorithm(matrixA, matrixB, i);
 
             }
         }
-//
-////        PrintMatrix(result2);
-//
-//        System.out.println(MatricesAreIdentical(result, result2) ? "Matrices are identical" : "Matrices are not identical");
-//
-//
-//
+////
+//////        PrintMatrix(result2);
+////
+////
+////
+////
+
 
     }
 
