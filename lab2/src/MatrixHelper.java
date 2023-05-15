@@ -53,4 +53,14 @@ public class MatrixHelper {
             System.out.println();
         }
     }
+
+    public static int[][] addMatrices(int[][] matrixA, int[][] matrixB){
+        int[][] result = new int[matrixA.length][matrixA[0].length];
+        for(int i = 0; i < matrixA.length; i++){
+            for(int j = 0; j < matrixA[0].length;j++){
+                result[i][j] = matrixA[i][j] + matrixB[i][j];
+            }
+        }
+        return result;
+    }
 }
