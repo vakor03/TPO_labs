@@ -12,14 +12,13 @@ public class StripeAlgorithm implements IMatrixMultiplicationAlgorithm {
         int[][] transposedMatrixB = MatrixHelper.transposeMatrix(MatrixHelper.clone(matrixB));
 
         ExecutorService executor = Executors.newFixedThreadPool(countThread);
-        Future<Integer>[] futures = new Future[matrixA.length * matrixA.length];
+        Future<Integer>[] futures = new Future[result.length * result[0].length];
 
-        int iterationsCount = matrixA.length;
-        for (int i = 0; i < iterationsCount; i++) { // TODO:check var in for
+        for (int i = 0; i < matrixA[0].length; i++) {
             for (int j = 0; j < matrixA.length; j++) {
                 int rowIndex = j;
-                int colIndex = (j + i) % matrixA.length; //TODO: same here
-                int curIndex = rowIndex * matrixA.length + colIndex;
+                int colIndex = (j + i) % result[0].length;
+                int curIndex = rowIndex * result.length + colIndex;
 
                 futures[curIndex] = executor.submit(new StripeWorker(matrixA[rowIndex], transposedMatrixB[colIndex]));
             }
