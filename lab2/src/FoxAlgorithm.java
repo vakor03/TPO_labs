@@ -6,41 +6,46 @@ import java.util.concurrent.Future;
 
 public class FoxAlgorithm implements IMatrixMultiplicationAlgorithm {
     final int countThread;
+    final IMatrixMultiplicationAlgorithm algorithmForSmallMatrices = new FasterSequentialAlgorithm();
+    final int sizeMatrixM;
 
-    public FoxAlgorithm(int countThread) {
+    public FoxAlgorithm(int countThread, int sizeMatrixM) {
         this.countThread = countThread;
+        this.sizeMatrixM = sizeMatrixM;
     }
 
     public int[][] multiply(int[][] matrixA, int[][] matrixB) {
-        int sizeMatrixM = (int) Math.sqrt(countThread - 1) + 1;
-        int[][][][] matrixM1 = MatrixToMatrixMatrices(matrixA, sizeMatrixM);
-        int[][][][] matrixM2 = MatrixToMatrixMatrices(matrixB, sizeMatrixM);
+//        int sizeMatrixM = (int) Math.sqrt(countThread - 1) + 1;
+        int blocksCount = matrixA.length / sizeMatrixM;
+        int[][][][] matrixM1 = splitMatrixIntoSmallerMatrices(matrixA, blocksCount);
+        int[][][][] matrixM2 = splitMatrixIntoSmallerMatrices(matrixB, blocksCount);
 
         int sizeInternalM = matrixM1[0][0][0].length;
-        int[][][][] resultMatrixM = new int[sizeMatrixM][sizeMatrixM][][];
-        for (int i = 0; i < sizeMatrixM; i++) {
-            for (int j = 0; j < sizeMatrixM; j++) {
+        int[][][][] resultMatrixM = new int[blocksCount][blocksCount][][];
+        for (int i = 0; i < blocksCount; i++) {
+            for (int j = 0; j < blocksCount; j++) {
                 resultMatrixM[i][j] = new int[sizeInternalM][sizeInternalM];
             }
         }
 
         ExecutorService executor = Executors.newFixedThreadPool(countThread);
-        for (int k = 0; k < sizeMatrixM; k++) {
+        for (int k = 0; k < blocksCount; k++) {
             ArrayList<Future<int[][]>> futures = new ArrayList<>();
-            for (int i = 0; i < sizeMatrixM; i++) {
-                for (int j = 0; j < sizeMatrixM; j++) {
+            for (int i = 0; i < blocksCount; i++) {
+                for (int j = 0; j < blocksCount; j++) {
                     TaskFoxAlgorithm task = new TaskFoxAlgorithm(
-                            matrixM1[i][(i + k) % sizeMatrixM],
-                            matrixM2[(i + k) % sizeMatrixM][j],
-                            resultMatrixM[i][j]);
+                            matrixM1[i][(i + k) % blocksCount],
+                            matrixM2[(i + k) % blocksCount][j],
+                            resultMatrixM[i][j],
+                            algorithmForSmallMatrices);
                     futures.add(executor.submit(task));
                 }
             }
 
-            for (int i = 0; i < sizeMatrixM; i++) {
-                for (int j = 0; j < sizeMatrixM; j++) {
+            for (int i = 0; i < blocksCount; i++) {
+                for (int j = 0; j < blocksCount; j++) {
                     try {
-                        resultMatrixM[i][j] = futures.get(i * sizeMatrixM + j).get();
+                        resultMatrixM[i][j] = futures.get(i * blocksCount + j).get();
                     } catch (Exception ignored) {
                     }
                 }
@@ -51,7 +56,7 @@ public class FoxAlgorithm implements IMatrixMultiplicationAlgorithm {
         return MatrixMatricesToMatrix(resultMatrixM, matrixA.length, matrixB[0].length);
     }
 
-    private int[][][][] MatrixToMatrixMatrices(int[][] matrix, int sizeMatrixM) {
+    private int[][][][] splitMatrixIntoSmallerMatrices(int[][] matrix, int sizeMatrixM) {
         int[][][][] matrixMatrices = new int[sizeMatrixM][sizeMatrixM][][];
         int sizeInternal = (int) ((matrix[0].length - 1) / sizeMatrixM) + 1;
 
@@ -103,13 +108,14 @@ class TaskFoxAlgorithm implements Callable<int[][]> {
     private int[][] matrix2;
     private int[][] resMatrix;
 
-    private final SequentialAlgorithm multiplier = new SequentialAlgorithm();
+    private final IMatrixMultiplicationAlgorithm multiplier;
 
 
-    public TaskFoxAlgorithm(int[][] matrix1, int[][] matrix2, int[][] resMatrix) {
+    public TaskFoxAlgorithm(int[][] matrix1, int[][] matrix2, int[][] resMatrix, IMatrixMultiplicationAlgorithm multiplier) {
         this.matrix1 = matrix1;
         this.matrix2 = matrix2;
         this.resMatrix = resMatrix;
+        this.multiplier = multiplier;
     }
 
     @Override

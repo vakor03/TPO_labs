@@ -2,23 +2,34 @@
 // then press Enter. You can now see whitespace characters in your code.
 public class Main {
     public static void main(String[] args) {
-        int[][] matrixA = MatrixHelper.generateRandomMatrix(1000, 1000);
-        int[][] matrixB = MatrixHelper.generateRandomMatrix(1000, 1000);
+        int[][] matrixA = MatrixHelper.generateRandomMatrix(2000, 2000);
+        int[][] matrixB = MatrixHelper.generateRandomMatrix(2000, 2000);
 
         checkAlgorithmAccuracy(matrixA, matrixB, new StripeAlgorithm(2));
         checkAlgorithmAccuracy(matrixA, matrixB, new FoxAlgorithm(2));
-        for (int i = 0; i < 5; i++) {
+        checkAlgorithmAccuracy(matrixA, matrixB, new FasterSequentialAlgorithm());
+        for (int i = 0; i < 10; i++) {
             IMatrixMultiplicationAlgorithm multiplicationAlgorithm = new StripeAlgorithm(i + 1);
             System.out.print("Stripe algorithm with " + (i + 1) + " threads: => ");
-            checkAlgorithmSpeed(matrixA, matrixB, multiplicationAlgorithm, 5);
-
-            IMatrixMultiplicationAlgorithm multiplicationAlgorithm2 = new FoxAlgorithm(i + 1);
-            System.out.print("Fox algorithm with " + (i + 1) + " threads: => ");
-            checkAlgorithmSpeed(matrixA, matrixB, multiplicationAlgorithm2, 5);
+            checkAlgorithmSpeed(matrixA, matrixB, multiplicationAlgorithm, 10);
         }
+
+        System.out.println();
+
+        for (int i = 1; i < 50; i++) {
+            int threadsCount = i+1;
+            IMatrixMultiplicationAlgorithm multiplicationAlgorithm2 = new FoxAlgorithm(threadsCount, 500);
+            System.out.print("Fox algorithm with " + threadsCount + " threads: => ");
+            checkAlgorithmSpeed(matrixA, matrixB, multiplicationAlgorithm2, 1);
+        }
+
         System.out.println();
         System.out.print("Sequential algorithm: => ");
-        checkAlgorithmSpeed(matrixA, matrixB, new SequentialAlgorithm(), 5);
+        checkAlgorithmSpeed(matrixA, matrixB, new SequentialAlgorithm(), 1);
+
+        System.out.println();
+        System.out.print("Faster sequential algorithm: => ");
+        checkAlgorithmSpeed(matrixA, matrixB, new FasterSequentialAlgorithm(), 1);
 
 
     }
