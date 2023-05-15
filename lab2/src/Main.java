@@ -5,19 +5,31 @@ public class Main {
         int[][] matrixA = MatrixHelper.generateRandomMatrix(1000, 1000);
         int[][] matrixB = MatrixHelper.generateRandomMatrix(1000, 1000);
 
+        checkAlgorithmAccuracy(matrixA, matrixB, new StripeAlgorithm(2));
+        checkAlgorithmAccuracy(matrixA, matrixB, new FoxAlgorithm(2));
         for (int i = 0; i < 5; i++) {
-            IMatrixMultiplicationAlgorithm multiplicationAlgorithm = new StripeAlgorithm(i+1);
-            System.out.print("Stripe algorithm with " + (i+1) + " threads: => ");
+            IMatrixMultiplicationAlgorithm multiplicationAlgorithm = new StripeAlgorithm(i + 1);
+            System.out.print("Stripe algorithm with " + (i + 1) + " threads: => ");
             checkAlgorithmSpeed(matrixA, matrixB, multiplicationAlgorithm, 5);
+
+            IMatrixMultiplicationAlgorithm multiplicationAlgorithm2 = new FoxAlgorithm(i + 1);
+            System.out.print("Fox algorithm with " + (i + 1) + " threads: => ");
+            checkAlgorithmSpeed(matrixA, matrixB, multiplicationAlgorithm2, 5);
         }
+        System.out.println();
+        System.out.print("Sequential algorithm: => ");
+        checkAlgorithmSpeed(matrixA, matrixB, new SequentialAlgorithm(), 5);
+
+
     }
-    static void checkAlgorithmAccuracy(int[][] matrixA, int[][] matrixB, IMatrixMultiplicationAlgorithm multiplicationAlgorithm){
+
+    static void checkAlgorithmAccuracy(int[][] matrixA, int[][] matrixB, IMatrixMultiplicationAlgorithm multiplicationAlgorithm) {
         int[][] result = multiplicationAlgorithm.multiply(matrixA, matrixB);
-        int[][] result2 = new MatrixMultiplication().multiply(matrixA, matrixB);
+        int[][] result2 = new SequentialAlgorithm().multiply(matrixA, matrixB);
         System.out.println(MatrixHelper.compareMatrices(result, result2) ? "Matrices are identical" : "Matrices are not identical");
     }
 
-    static void checkAlgorithmSpeed(int[][] matrixA, int[][] matrixB, IMatrixMultiplicationAlgorithm multiplicationAlgorithm, int iterations){
+    static void checkAlgorithmSpeed(int[][] matrixA, int[][] matrixB, IMatrixMultiplicationAlgorithm multiplicationAlgorithm, int iterations) {
         long[] times = new long[iterations];
         for (int i = 0; i < iterations; i++) {
             long startTime = System.currentTimeMillis();
