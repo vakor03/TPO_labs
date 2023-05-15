@@ -1,6 +1,6 @@
 import java.util.concurrent.*;
 
-public class StripeAlgorithm {
+public class StripeAlgorithm implements IMatrixMultiplicationAlgorithm {
     private final int countThread;
 
     public StripeAlgorithm(int countThread) {

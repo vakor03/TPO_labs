@@ -1,119 +1,36 @@
-import java.util.Random;
-import java.util.concurrent.Future;
-
 // Press Shift twice to open the Search Everywhere dialog and type `show whitespaces`,
 // then press Enter. You can now see whitespace characters in your code.
 public class Main {
     public static void main(String[] args) {
-        int[][] matrixA = GenerateRandomMatrix(2000, 2000);
-        int[][] matrixB = GenerateRandomMatrix(2000, 2000);
-//        int[][] matrixA = new int[][]{
-//                {1, 2, 3},
-//                {4, 5, 6},
-//                {7, 8 ,9}
-//        };
-//
-//        int[][] matrixB = new int[][]{
-//                {1, 2, 3},
-//                {4, 5, 6},
-//                {7, 8 ,9}
-//        };
-//
-//        var result = MatrixMultiplication.PerformSequentialAlgorithm(matrixA, matrixB);
-//        PrintMatrix(result);
+        int[][] matrixA = MatrixHelper.generateRandomMatrix(1000, 1000);
+        int[][] matrixB = MatrixHelper.generateRandomMatrix(1000, 1000);
 
-
-//        var result = MatrixMultiplication.PerformSequentialAlgorithm(matrixA, matrixB);
-//        var result2 = new StripeAlgorithm(8).multiply(matrixA, matrixB);
-//        System.out.println(MatricesAreIdentical(result, result2) ? "Matrices are identical" : "Matrices are not identical");
-////
-//////        long startTime = System.currentTimeMillis();
-////        int[][] result = MatrixMultiplication.PerformSequentialAlgorithm(matrixA, matrixB);
-//////        long endTime = System.currentTimeMillis();
-//////        System.out.println("Sequential algorithm took " + (endTime - startTime) + " milliseconds");
-//////        System.out.println();
-//////        PrintMatrix(result);
-////        callSeqAlgorithm(matrixA, matrixB);
-        for (int i = 1; i <= 5; i++) {
-            for (int j = 0; j < 5; j++) {
-                callStripeAlgorithm(matrixA, matrixB, i);
-
-            }
-        }
-////
-//////        PrintMatrix(result2);
-////
-////
-////
-////
-
-
-    }
-
-    private static void PrintMatrix(int[][] matrix) {
-        for (int[] row : matrix) {
-            for (int element : row) {
-                System.out.print(element + " ");
-            }
-            System.out.println();
+        for (int i = 0; i < 5; i++) {
+            IMatrixMultiplicationAlgorithm multiplicationAlgorithm = new StripeAlgorithm(i+1);
+            System.out.print("Stripe algorithm with " + (i+1) + " threads: => ");
+            checkAlgorithmSpeed(matrixA, matrixB, multiplicationAlgorithm, 5);
         }
     }
+    static void checkAlgorithmAccuracy(int[][] matrixA, int[][] matrixB, IMatrixMultiplicationAlgorithm multiplicationAlgorithm){
+        int[][] result = multiplicationAlgorithm.multiply(matrixA, matrixB);
+        int[][] result2 = new MatrixMultiplication().multiply(matrixA, matrixB);
+        System.out.println(MatrixHelper.compareMatrices(result, result2) ? "Matrices are identical" : "Matrices are not identical");
+    }
 
-    private static boolean MatricesAreIdentical(int[][] matrixA, int[][] matrixB) {
-        if (matrixA.length != matrixB.length) {
-            return false;
+    static void checkAlgorithmSpeed(int[][] matrixA, int[][] matrixB, IMatrixMultiplicationAlgorithm multiplicationAlgorithm, int iterations){
+        long[] times = new long[iterations];
+        for (int i = 0; i < iterations; i++) {
+            long startTime = System.currentTimeMillis();
+            multiplicationAlgorithm.multiply(matrixA, matrixB);
+            long endTime = System.currentTimeMillis();
+            times[i] = endTime - startTime;
         }
-        if (matrixA[0].length != matrixB[0].length) {
-            return false;
+        long sum = 0;
+        for (int i = 0; i < iterations; i++) {
+            sum += times[i];
         }
-        for (int i = 0; i < matrixA.length; i++) {
-            for (int j = 0; j < matrixB[0].length; j++) {
-                if (matrixA[i][j] != matrixB[i][j]) {
-                    return false;
-                }
-            }
-        }
-        return true;
+        System.out.println("Average time: " + (sum / iterations) + " milliseconds");
     }
 
-    private static int[][] GenerateRandomMatrix(int rows, int columns) {
-        int[][] matrix = new int[rows][columns];
-        Random random = new Random();
-        for (int[] row : matrix) {
-            for (int i = 0; i < row.length; i++) {
-                row[i] = random.nextInt(100);
-            }
-        }
-        return matrix;
-    }
-
-//    private static void callStripeAlgorithm(int[][] matrixA, int[][] matrixB, int numberOfThreads) {
-//        long startTime = System.currentTimeMillis();
-//        int[][] result2 = new BlockStripedDecompositionAlgorithmOld().Multiply(matrixA, matrixB, 10);
-//        long endTime = System.currentTimeMillis();
-//        System.out.println("Block-striped => " + (endTime - startTime) + " ms with " + numberOfThreads + " threads");
-////        System.out.println();
-//    }
-
-    private static void CallTapeAlgorithm(int[][] matrixA, int[][] matrixB, int numberOfThreads) {
-        long startTime = System.currentTimeMillis();
-        int[][] result2 = new TapeMultiplicationAlgorithmOld().Multiply(matrixA, matrixB, 10);
-        long endTime = System.currentTimeMillis();
-        System.out.println("Tape => " + (endTime - startTime) + " ms with " + numberOfThreads + " threads");
-    }
-
-    private static void callStripeAlgorithm(int[][] matrixA, int[][] matrixB, int numberOfThreads) {
-        long startTime = System.currentTimeMillis();
-        int[][] result2 = new StripeAlgorithm(numberOfThreads).multiply(matrixA, matrixB);
-        long endTime = System.currentTimeMillis();
-        System.out.println("Block-striped => " + (endTime - startTime) + " ms" + " with " + numberOfThreads + " threads");
-    }
-
-    private static void callSeqAlgorithm(int[][] matrixA, int[][] matrixB) {
-        long startTime = System.currentTimeMillis();
-        int[][] result2 = MatrixMultiplication.PerformSequentialAlgorithm(matrixA, matrixB);
-        long endTime = System.currentTimeMillis();
-        System.out.println("Sequential => " + (endTime - startTime) + " ms");
-    }
 }
 
