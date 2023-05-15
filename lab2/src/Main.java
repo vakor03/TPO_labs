@@ -4,26 +4,32 @@ import java.util.Random;
 // then press Enter. You can now see whitespace characters in your code.
 public class Main {
     public static void main(String[] args) {
-        // Press Alt+Enter with your caret at the highlighted text to see how
-        // IntelliJ IDEA suggests fixing it.
         int[][] matrixA = GenerateRandomMatrix(2000, 2000);
         int[][] matrixB = GenerateRandomMatrix(2000, 2000);
+//        var result = MatrixMultiplication.PerformSequentialAlgorithm(matrixA, matrixB);
+//        var result2 = new StripeAlgorithm(8).multiply(matrixA, matrixB);
+//
+////        long startTime = System.currentTimeMillis();
+//        int[][] result = MatrixMultiplication.PerformSequentialAlgorithm(matrixA, matrixB);
+////        long endTime = System.currentTimeMillis();
+////        System.out.println("Sequential algorithm took " + (endTime - startTime) + " milliseconds");
+////        System.out.println();
+////        PrintMatrix(result);
+//        callSeqAlgorithm(matrixA, matrixB);
+        for (int i = 1; i <= 5; i++) {
+            for (int j = 0; j < 5; j++) {
+                callStripeAlgorithm(matrixA, matrixB, i);
 
-//        long startTime = System.currentTimeMillis();
-        int[][] result = MatrixMultiplication.PerformSequentialAlgorithm(matrixA, matrixB);
-//        long endTime = System.currentTimeMillis();
-//        System.out.println("Sequential algorithm took " + (endTime - startTime) + " milliseconds");
-//        System.out.println();
-//        PrintMatrix(result);
-        for (int i = 20; i>=2; i--){
-            CallBlockStripedDecompositionAlgorithm(matrixA, matrixB, i);
-            CallTapeAlgorithm(matrixA, matrixB, i);
-            System.out.println();
+            }
         }
-
-//        PrintMatrix(result2);
-
+//
+////        PrintMatrix(result2);
+//
 //        System.out.println(MatricesAreIdentical(result, result2) ? "Matrices are identical" : "Matrices are not identical");
+//
+//
+//
+
     }
 
     private static void PrintMatrix(int[][] matrix) {
@@ -63,19 +69,33 @@ public class Main {
         return matrix;
     }
 
-    private static void CallBlockStripedDecompositionAlgorithm(int[][] matrixA, int[][] matrixB, int numberOfThreads) {
-        long startTime = System.currentTimeMillis();
-        int[][] result2 = new BlockStripedDecompositionAlgorithmOld().Multiply(matrixA, matrixB, 10);
-        long endTime = System.currentTimeMillis();
-        System.out.println("Block-striped => " + (endTime - startTime) + " ms with " + numberOfThreads + " threads");
-//        System.out.println();
-    }
+//    private static void callStripeAlgorithm(int[][] matrixA, int[][] matrixB, int numberOfThreads) {
+//        long startTime = System.currentTimeMillis();
+//        int[][] result2 = new BlockStripedDecompositionAlgorithmOld().Multiply(matrixA, matrixB, 10);
+//        long endTime = System.currentTimeMillis();
+//        System.out.println("Block-striped => " + (endTime - startTime) + " ms with " + numberOfThreads + " threads");
+////        System.out.println();
+//    }
 
     private static void CallTapeAlgorithm(int[][] matrixA, int[][] matrixB, int numberOfThreads) {
         long startTime = System.currentTimeMillis();
-        int[][] result2 = new TapeMultiplicationAlgorithm().Multiply(matrixA, matrixB, 10);
+        int[][] result2 = new TapeMultiplicationAlgorithmOld().Multiply(matrixA, matrixB, 10);
         long endTime = System.currentTimeMillis();
         System.out.println("Tape => " + (endTime - startTime) + " ms with " + numberOfThreads + " threads");
+    }
+
+    private static void callStripeAlgorithm(int[][] matrixA, int[][] matrixB, int numberOfThreads) {
+        long startTime = System.currentTimeMillis();
+        int[][] result2 = new StripeAlgorithm(numberOfThreads).multiply(matrixA, matrixB);
+        long endTime = System.currentTimeMillis();
+        System.out.println("Block-striped => " + (endTime - startTime) + " ms" + " with " + numberOfThreads + " threads");
+    }
+
+    private static void callSeqAlgorithm(int[][] matrixA, int[][] matrixB) {
+        long startTime = System.currentTimeMillis();
+        int[][] result2 = MatrixMultiplication.PerformSequentialAlgorithm(matrixA, matrixB);
+        long endTime = System.currentTimeMillis();
+        System.out.println("Sequential => " + (endTime - startTime) + " ms");
     }
 }
 

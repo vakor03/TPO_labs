@@ -1,9 +1,7 @@
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 
-public class TapeMultiplicationAlgorithm {
+public class TapeMultiplicationAlgorithmOld {
     public int[][] Multiply(int[][] matrixA, int[][] matrixB, int numberOfThreads) {
         int[][] result = new int[matrixA.length][matrixB[0].length];
         HashSet<Thread> threads = new HashSet<>();
@@ -13,7 +11,7 @@ public class TapeMultiplicationAlgorithm {
             int endRow = i == numberOfThreads - 1 ? matrixA.length : (i + 1) * matrixA.length / numberOfThreads;
             int[][] slicedMatrixA = sliceMatrix(matrixA, startRow, endRow);
             int[][] resultPart = new int[slicedMatrixA.length][matrixB[0].length];
-            Thread thread = new Thread(new TapeMultiplicationWorker(slicedMatrixA, matrixB, resultPart));
+            Thread thread = new Thread(new TapeMultiplicationWorkerOld(slicedMatrixA, matrixB, resultPart));
             arrayParts.add(resultPart);
             thread.start();
             threads.add(thread);
@@ -54,13 +52,13 @@ public class TapeMultiplicationAlgorithm {
     }
 }
 
-class TapeMultiplicationWorker implements Runnable{
+class TapeMultiplicationWorkerOld implements Runnable{
 
     private int[][] matrixA;
     private int[][] matrixB;
     private int[][] result;
 
-    public TapeMultiplicationWorker(int[][] matrixA, int[][] matrixB, int[][] result) {
+    public TapeMultiplicationWorkerOld(int[][] matrixA, int[][] matrixB, int[][] result) {
         this.matrixA = matrixA;
         this.matrixB = matrixB;
         this.result = result;
@@ -71,3 +69,4 @@ class TapeMultiplicationWorker implements Runnable{
         MatrixMultiplication.PerformSequentialAlgorithm(matrixA, matrixB, result);
     }
 }
+
