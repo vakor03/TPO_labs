@@ -6,8 +6,8 @@ import java.util.List;
 // then press Enter. You can now see whitespace characters in your code.
 public class Main {
     public static void main(String[] args) {
-//        NonSyncSymbPrinter nonSyncSymbPrinter = new NonSyncSymbPrinter('-', 100);
-//        NonSyncSymbPrinter nonSyncSymbPrinter1 = new NonSyncSymbPrinter('|', 100);
+//        NonSyncSymbPrinter nonSyncSymbPrinter = new NonSyncSymbPrinter('-', 500);
+//        NonSyncSymbPrinter nonSyncSymbPrinter1 = new NonSyncSymbPrinter('|', 500);
 //        nonSyncSymbPrinter.start();
 //        nonSyncSymbPrinter1.start();
 //
@@ -19,11 +19,11 @@ public class Main {
 //        }
 //
 //        System.out.println();
-        char[] symbols = {'-', '|', '+', '|','*'};
+        char[] symbols = {'-', '|'};
         Synchronizer synchronizer = new Synchronizer(symbols);
         Thread[] threads = new Thread[symbols.length];
         for (int i = 0; i < symbols.length; i++) {
-            threads[i] = new Thread(new SymbolPrinter(symbols[i], synchronizer, 100));
+            threads[i] = new Thread(new SymbolPrinter(symbols[i], synchronizer, 5000));
         }
         for (Thread value : threads) {
             value.start();
@@ -40,62 +40,3 @@ public class Main {
     }
 }
 
-class Synchronizer {
-    private final char[] symbols;
-    private int activeIndex;
-    private int counter;
-
-    public Synchronizer(char[] symbols) {
-        this.symbols = symbols;
-    }
-
-    public char getActiveSymbol() {
-        return symbols[activeIndex];
-    }
-
-    public void updateActiveIndex() {
-        activeIndex++;
-        activeIndex %= symbols.length;
-        counter++;
-
-        if (counter % 100 == 0 && counter != 0) {
-            System.out.println();
-        }
-
-        notifyAll();
-    }
-}
-
-class SymbolPrinter implements Runnable {
-    private final char symbol;
-    private final Synchronizer synchronizer;
-    private final int iterationCount;
-
-    public char getSymbol() {
-        return symbol;
-    }
-
-    public SymbolPrinter(char symbol, Synchronizer synchronizer, int iterationCount) {
-        this.symbol = symbol;
-        this.synchronizer = synchronizer;
-        this.iterationCount = iterationCount;
-    }
-
-    @Override
-    public void run() {
-        for (int i = 0; i < iterationCount; i++) {
-            synchronized (synchronizer) {
-                while (synchronizer.getActiveSymbol() != symbol) {
-                    try {
-                        synchronizer.wait();
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-
-                System.out.print(symbol);
-                synchronizer.updateActiveIndex();
-            }
-        }
-    }
-}

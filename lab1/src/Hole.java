@@ -26,7 +26,7 @@ public class Hole {
     }
 
     public void draw(Graphics2D g2){
-        g2.setColor(Color.black);
+        g2.setColor(Color.YELLOW);
         g2.fillOval(x, y, radius*2, radius*2);
     }
 }

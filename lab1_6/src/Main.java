@@ -8,11 +8,8 @@ public class Main {
         HashSet<Thread> threads = new HashSet<>();
 
         threads.add(new IncrementThread(counter, 1_000_000));
-        threads.add(new IncrementThread(counter, 1_000_000));
+//        threads.add(new IncrementThread(counter, 1_000_000));
         threads.add(new DecrementThread(counter, 1_000_000));
-
-        ReentrantLock lock = new ReentrantLock();
-        lock.lock();
 
         for (Thread thread : threads) {
             thread.start();

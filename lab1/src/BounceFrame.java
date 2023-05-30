@@ -40,7 +40,7 @@ public class BounceFrame extends JFrame {
         JButton buttonStop = new JButton("Stop");
         JButton buttonSpawnDependent = new JButton("Spawn dependent");
 
-        int lowPriorityBallsCount = 10;
+        int lowPriorityBallsCount = 5000;
         int maxPriorityBallsCount = 1;
         int spawnX = 20;
         int spawnY = 20;
@@ -105,7 +105,7 @@ public class BounceFrame extends JFrame {
         buttonPanel.add(buttonSpawnMultiple);
         buttonPanel.add(buttonSpawnDependent);
         buttonPanel.add(buttonStop);
-        buttonPanel.add(label);
+//        buttonPanel.add(label);
 
         content.add(buttonPanel, BorderLayout.SOUTH);
     }

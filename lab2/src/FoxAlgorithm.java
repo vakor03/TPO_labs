@@ -22,6 +22,8 @@ public class FoxAlgorithm implements IMatrixMultiplicationAlgorithm {
 
         int sizeInternalM = matrixM1[0][0][0].length;
         int[][][][] resultMatrixM = new int[blocksCount][blocksCount][][];
+
+        // Initializing result matixes
         for (int i = 0; i < blocksCount; i++) {
             for (int j = 0; j < blocksCount; j++) {
                 resultMatrixM[i][j] = new int[sizeInternalM][sizeInternalM];
@@ -53,7 +55,7 @@ public class FoxAlgorithm implements IMatrixMultiplicationAlgorithm {
         }
         executor.shutdown();
 
-        return MatrixMatricesToMatrix(resultMatrixM, matrixA.length, matrixB[0].length);
+        return combineMatrixMatricesToMatrix(resultMatrixM, matrixA.length, matrixB[0].length);
     }
 
     private int[][][][] splitMatrixIntoSmallerMatrices(int[][] matrix, int sizeMatrixM) {
@@ -80,7 +82,7 @@ public class FoxAlgorithm implements IMatrixMultiplicationAlgorithm {
         return matrixMatrices;
     }
 
-    private int[][] MatrixMatricesToMatrix(int[][][][] matrixM, int heightMatrix, int widthMatrix) {
+    private int[][] combineMatrixMatricesToMatrix(int[][][][] matrixM, int heightMatrix, int widthMatrix) {
         int[][] resultMatrix = new int[heightMatrix][widthMatrix];
 
         for (int i = 0; i < matrixM.length; i++) {

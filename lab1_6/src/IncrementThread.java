@@ -10,9 +10,9 @@ public class IncrementThread extends Thread{
     public void run() {
         for (int i = 0; i < times; i++) {
 //            counter.incrementNonSync(); // non-synchronized increment
-//            counter.incrementSyncMethod(); // synchronized method increment
+            counter.incrementSyncMethod(); // synchronized method increment
 //            counter.incrementSyncBlock(); // synchronized block increment
-            counter.incrementLock(); // lock increment
+//            counter.incrementLock(); // lock increment
         }
     }
 }
