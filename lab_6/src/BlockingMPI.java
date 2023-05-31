@@ -17,14 +17,14 @@ public class BlockingMPI {
         long startTime = System.currentTimeMillis();
         MPI.Init(args);
 
-        int countTasks = MPI.COMM_WORLD.Size();
+        int tasksCount = MPI.COMM_WORLD.Size();
         int taskID = MPI.COMM_WORLD.Rank();
-//        System.out.println("Tasks: " + countTasks);
+//        System.out.println("Tasks: " + tasksCount);
 
         int masterID = 0;
-        int countWorkers = countTasks - 1;
+        int countWorkers = tasksCount - 1;
 
-        if (countTasks < 2) {
+        if (tasksCount < 2) {
             MPI.COMM_WORLD.Abort(1);
             exit(1);
         }
@@ -62,7 +62,7 @@ public class BlockingMPI {
         Matrix matrix2 = MatrixHelper.createMatrixFromBuffer(matrix2Buffer, countRows, countColumn);
         Matrix resultMatrix = subMatrix1.multiply(matrix2);
 
-        int[] resultMatrixBuffer = resultMatrix.getAsBuffer();
+        int[] resultMatrixBuffer = resultMatrix.toIntBuffer();
 
         MPI.COMM_WORLD.Send(startRowIndex, 0, 1, MPI.INT, 0, TAG_WORKER);
         MPI.COMM_WORLD.Send(endRowIndex, 0, 1, MPI.INT, 0, TAG_WORKER);
@@ -108,17 +108,17 @@ public class BlockingMPI {
             }
 
             Matrix subMatrix1 = matrix1.sliceMatrix(startRowIndex, endRowIndex, countColumn);
-            int[] subMatrix1Buff = subMatrix1.getAsBuffer();
-            int[] matrix2Buff = matrix2.getAsBuffer();
+            int[] subMatrix1Buffer = subMatrix1.toIntBuffer();
+            int[] matrix2Buffer = matrix2.toIntBuffer();
 
-            sendAssignmentToWorker(i, startRowIndex, endRowIndex, subMatrix1Buff, matrix2Buff);
+            sendAssignmentToWorker(i, startRowIndex, endRowIndex, subMatrix1Buffer, matrix2Buffer);
         }
     }
 
-    private static void sendAssignmentToWorker(int i, int startRowIndex, int endRowIndex, int[] subMatrix1Buff, int[] matrix2Buff) {
+    private static void sendAssignmentToWorker(int i, int startRowIndex, int endRowIndex, int[] subMatrix1Buffer, int[] matrix2Buffer) {
         MPI.COMM_WORLD.Send(new int[]{startRowIndex}, 0, 1, MPI.INT, i, TAG_MASTER);
         MPI.COMM_WORLD.Send(new int[]{endRowIndex}, 0, 1, MPI.INT, i, TAG_MASTER);
-        MPI.COMM_WORLD.Send(subMatrix1Buff, 0, subMatrix1Buff.length, MPI.INT, i, TAG_MASTER);
-        MPI.COMM_WORLD.Send(matrix2Buff, 0, matrix2Buff.length, MPI.INT, i, TAG_MASTER);
+        MPI.COMM_WORLD.Send(subMatrix1Buffer, 0, subMatrix1Buffer.length, MPI.INT, i, TAG_MASTER);
+        MPI.COMM_WORLD.Send(matrix2Buffer, 0, matrix2Buffer.length, MPI.INT, i, TAG_MASTER);
     }
 }

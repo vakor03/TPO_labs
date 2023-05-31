@@ -2,9 +2,11 @@
   <library name="lib">
     <CLASSES>
       <root url="file://$PROJECT_DIR$/../../../mpj/lib" />
+      <root url="file://$PROJECT_DIR$/../../../mpj/lib" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
+    <jarDirectory url="file://$PROJECT_DIR$/../../../mpj/lib" recursive="false" />
     <jarDirectory url="file://$PROJECT_DIR$/../../../mpj/lib" recursive="false" />
   </library>
 </component>
