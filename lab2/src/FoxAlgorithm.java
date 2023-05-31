@@ -6,7 +6,7 @@ import java.util.concurrent.Future;
 
 public class FoxAlgorithm implements IMatrixMultiplicationAlgorithm {
     final int countThread;
-    final IMatrixMultiplicationAlgorithm algorithmForSmallMatrices = new FasterSequentialAlgorithm();
+    final IMatrixMultiplicationAlgorithm algorithmForSmallMatrices = new SequentialAlgorithm();
 //    final int sizeMatrixM;
 
     public FoxAlgorithm(int countThread/*, int sizeMatrixM*/) {
@@ -16,36 +16,36 @@ public class FoxAlgorithm implements IMatrixMultiplicationAlgorithm {
 
     public Matrix multiply(Matrix matrixA, Matrix matrixB) {
         int sizeMatrixM = (int) Math.sqrt(countThread - 1) + 1;
-        int blocksCount = matrixA.getRowsCount() / sizeMatrixM;
-        Matrix[][] matrixM1 = splitMatrixIntoSmallerMatrices(matrixA, blocksCount);
-        Matrix[][] matrixM2 = splitMatrixIntoSmallerMatrices(matrixB, blocksCount);
+//        int blocksCount = matrixA.getRowsCount() / sizeMatrixM;
+        Matrix[][] matrixM1 = splitMatrixIntoSmallerMatrices(matrixA, sizeMatrixM);
+        Matrix[][] matrixM2 = splitMatrixIntoSmallerMatrices(matrixB, sizeMatrixM);
 
         int sizeInternalM = matrixM1[0][0].getColumnsCount();
-        Matrix[][] resultMatrixM = new Matrix[blocksCount][blocksCount];
-        for (int i = 0; i < blocksCount; i++) {
-            for (int j = 0; j < blocksCount; j++) {
+        Matrix[][] resultMatrixM = new Matrix[sizeMatrixM][sizeMatrixM];
+        for (int i = 0; i < sizeMatrixM; i++) {
+            for (int j = 0; j < sizeMatrixM; j++) {
                 resultMatrixM[i][j] = new Matrix(sizeInternalM, sizeInternalM);
             }
         }
 
         ExecutorService executor = Executors.newFixedThreadPool(countThread);
-        for (int k = 0; k < blocksCount; k++) {
+        for (int k = 0; k < sizeMatrixM; k++) {
             ArrayList<Future<Matrix>> futures = new ArrayList<>();
-            for (int i = 0; i < blocksCount; i++) {
-                for (int j = 0; j < blocksCount; j++) {
+            for (int i = 0; i < sizeMatrixM; i++) {
+                for (int j = 0; j < sizeMatrixM; j++) {
                     TaskFoxAlgorithm task = new TaskFoxAlgorithm(
-                            matrixM1[i][(i + k) % blocksCount],
-                            matrixM2[(i + k) % blocksCount][j],
+                            matrixM1[i][(i + k) % sizeMatrixM],
+                            matrixM2[(i + k) % sizeMatrixM][j],
                             resultMatrixM[i][j],
                             algorithmForSmallMatrices);
                     futures.add(executor.submit(task));
                 }
             }
 
-            for (int i = 0; i < blocksCount; i++) {
-                for (int j = 0; j < blocksCount; j++) {
+            for (int i = 0; i < sizeMatrixM; i++) {
+                for (int j = 0; j < sizeMatrixM; j++) {
                     try {
-                        resultMatrixM[i][j] = futures.get(i * blocksCount + j).get();
+                        resultMatrixM[i][j] = futures.get(i * sizeMatrixM + j).get();
                     } catch (Exception ignored) {
                     }
                 }
@@ -53,10 +53,10 @@ public class FoxAlgorithm implements IMatrixMultiplicationAlgorithm {
         }
         executor.shutdown();
 
-        return MatrixMatricesToMatrix(resultMatrixM, matrixA.getRowsCount(), matrixB.getColumnsCount());
+        return combineMatrixMatricesToMatrix(resultMatrixM, matrixA.getRowsCount(), matrixB.getColumnsCount());
     }
 
-    private Matrix[][] splitMatrixIntoSmallerMatrices(Matrix matrix, int sizeMatrixM) {
+    public static Matrix[][] splitMatrixIntoSmallerMatrices(Matrix matrix, int sizeMatrixM) {
         Matrix[][] matrixMatrices = new Matrix[sizeMatrixM][sizeMatrixM];
         int sizeInternal = (int) ((matrix.getColumnsCount() - 1) / sizeMatrixM) + 1;
 
@@ -80,7 +80,7 @@ public class FoxAlgorithm implements IMatrixMultiplicationAlgorithm {
         return matrixMatrices;
     }
 
-    private Matrix MatrixMatricesToMatrix(Matrix[][] matrixM, int rowsCount, int columnsCount) {
+    public static Matrix combineMatrixMatricesToMatrix(Matrix[][] matrixM, int rowsCount, int columnsCount) {
         Matrix resultMatrix = new Matrix(rowsCount, columnsCount);
 
         for (int i = 0; i < matrixM.length; i++) {
