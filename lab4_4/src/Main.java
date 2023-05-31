@@ -18,7 +18,7 @@ public class Main {
         words.add("Computer");
 
         long startTime = System.currentTimeMillis();
-        HashMap<String, List<String>> fileAndExistWords = requiredWordsChecker.findCommonWordsForkJoinPool(folder, words);
+        HashMap<String, List<String>> fileAndExistWords = requiredWordsChecker.findCommonWordsForkJoin(folder, words);
         long time = System.currentTimeMillis() - startTime;
 
         int dontHaveRequiredWords = 0;

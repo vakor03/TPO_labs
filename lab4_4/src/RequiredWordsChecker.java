@@ -15,7 +15,7 @@ public class RequiredWordsChecker {
         return line.trim().split("(\\s|\\p{Punct})+");
     }
 
-    public HashMap<String, List<String>> findCommonWordsForkJoinPool(Folder folder, List<String> requiredWords) {
+    public HashMap<String, List<String>> findCommonWordsForkJoin(Folder folder, List<String> requiredWords) {
         List<String> wordsToLowerCase = new ArrayList<>();
         for (String word : requiredWords) {
             wordsToLowerCase.add(word.toLowerCase());

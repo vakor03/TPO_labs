@@ -9,7 +9,7 @@ public class Main {
         CommonWordCounter commonWordSearcher = new CommonWordCounter(2);
 
         long startTime = System.currentTimeMillis();
-        HashSet<String> commonWords = commonWordSearcher.findCommonWordsForkJoint(folder);
+        HashSet<String> commonWords = commonWordSearcher.findCommonWordsForkJoin(folder);
         long time = System.currentTimeMillis() - startTime;
 
         System.out.println("Common words: " + commonWords);

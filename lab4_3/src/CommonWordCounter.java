@@ -12,7 +12,7 @@ public class CommonWordCounter {
         return line.trim().split("(\\s|\\p{Punct})+");
     }
 
-    public HashSet<String> findCommonWordsForkJoint(Folder folder) {
+    public HashSet<String> findCommonWordsForkJoin(Folder folder) {
         return forkJoinPool.invoke(new FolderSearchTask(folder));
     }
 
