@@ -33,7 +33,7 @@ public class Main {
         System.out.println("Mean length: " + meanLength);
         System.out.println("Dispersion: " + D);
         System.out.println("Mean square deviation: " + G);
-        System.out.println("\nTime: " + totalTime);
+        System.out.println("\nTime: " + totalTime + " ms");
 
     }
 }

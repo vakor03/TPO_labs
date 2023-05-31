@@ -1,4 +1,4 @@
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -13,8 +13,8 @@ class FolderSearchTask extends RecursiveTask<HashSet<String>> {
 
     @Override
     protected HashSet<String> compute() {
-        HashSet<String> commonWord;
-        List<RecursiveTask<HashSet<String>>> tasks = new LinkedList<>();
+        HashSet<String> commonWords;
+        List<RecursiveTask<HashSet<String>>> tasks = new ArrayList<>();
 
         for (Folder subFolder : folder.getSubFolders()) {
             FolderSearchTask task = new FolderSearchTask(subFolder);
@@ -22,17 +22,17 @@ class FolderSearchTask extends RecursiveTask<HashSet<String>> {
             task.fork();
         }
 
-        for (Document document : folder.getDocuments()) {
-            DocumentSearchTask task = new DocumentSearchTask(document);
+        for (TextFile textFile : folder.getTextFiles()) {
+            TextFileSearchTask task = new TextFileSearchTask(textFile);
             tasks.add(task);
             task.fork();
         }
 
-        commonWord = tasks.get(0).join();
+        commonWords = tasks.get(0).join();
         for (RecursiveTask<HashSet<String>> task : tasks) {
-            commonWord.retainAll(task.join());
+            commonWords.retainAll(task.join());
         }
 
-        return commonWord;
+        return commonWords;
     }
 }

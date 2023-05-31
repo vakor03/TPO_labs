@@ -21,7 +21,7 @@ class FolderSearchTask extends RecursiveTask<List<Integer>> {
             task.fork();
         }
 
-        for (TextFile textFile : folder.getDocuments()) {
+        for (TextFile textFile : folder.getTextFiles()) {
             TextFileSearchTask task = new TextFileSearchTask(textFile);
             tasks.add(task);
             task.fork();

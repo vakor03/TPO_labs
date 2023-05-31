@@ -7,16 +7,23 @@ import java.util.List;
 
 public class TextFile {
     private final List<String> lines;
+    private final String name;
 
-    public TextFile(List<String> lines) {
+    public TextFile(List<String> lines, String name) {
         this.lines = lines;
+        this.name = name;
     }
 
-    List<String> getLines() {
+    public List<String> getLines() {
         return this.lines;
     }
 
-    static TextFile createFromFile(File file) throws IOException {
+    public String getName() {
+        return this.name;
+    }
+
+    public static TextFile createFromFile(File file) throws IOException {
+        String path = file.getPath() + file.getName();
         List<String> lines = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line = reader.readLine();
@@ -25,7 +32,7 @@ public class TextFile {
                 line = reader.readLine();
             }
         }
-        return new TextFile(lines);
+        return new TextFile(lines, path);
     }
 }
 

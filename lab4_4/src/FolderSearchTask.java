@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,8 +16,8 @@ class FolderSearchTask extends RecursiveTask<HashMap<String, List<String>>> {
 
     @Override
     protected HashMap<String, List<String>> compute() {
-        HashMap<String, List<String>> fileExistWords = new HashMap<>();
-        List<RecursiveTask<HashMap<String, List<String>>>> tasks = new LinkedList<>();
+        HashMap<String, List<String>> filesWithRequiredWords = new HashMap<>();
+        List<RecursiveTask<HashMap<String, List<String>>>> tasks = new ArrayList<>();
 
         for (Folder subFolder : folder.getSubFolders()) {
             FolderSearchTask task = new FolderSearchTask(subFolder, wordsMustExist);
@@ -24,17 +25,16 @@ class FolderSearchTask extends RecursiveTask<HashMap<String, List<String>>> {
             task.fork();
         }
 
-        for (Document document : folder.getDocuments()) {
-            DocumentSearchTask task = new DocumentSearchTask(document, wordsMustExist);
+        for (TextFile textFile : folder.getTextFiles()) {
+            TextFileSearchTask task = new TextFileSearchTask(textFile, wordsMustExist);
             tasks.add(task);
             task.fork();
         }
 
-
         for (RecursiveTask<HashMap<String, List<String>>> task : tasks) {
-            fileExistWords.putAll(task.join());
+            filesWithRequiredWords.putAll(task.join());
         }
 
-        return fileExistWords;
+        return filesWithRequiredWords;
     }
 }

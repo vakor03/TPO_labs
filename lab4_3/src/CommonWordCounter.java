@@ -8,18 +8,18 @@ public class CommonWordCounter {
         forkJoinPool = new ForkJoinPool(countThreads);
     }
 
-    public static String[] wordsIn(String line) {
+    public static String[] getWordsIn(String line) {
         return line.trim().split("(\\s|\\p{Punct})+");
     }
 
-    public HashSet<String> findCommonWordsParallel(Folder folder) {
+    public HashSet<String> findCommonWordsForkJoint(Folder folder) {
         return forkJoinPool.invoke(new FolderSearchTask(folder));
     }
 
-    public static HashSet<String> getUniqueWordsInDocument(Document document) {
+    public static HashSet<String> getUniqueWordsInTextFile(TextFile textFile) {
         HashSet<String> uniqueWords = new HashSet<>();
-        for (String line : document.getLines()) {
-            for (String word : wordsIn(line)) {
+        for (String line : textFile.getLines()) {
+            for (String word : getWordsIn(line)) {
                 uniqueWords.add(word.toLowerCase());
             }
         }

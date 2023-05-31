@@ -12,7 +12,7 @@ public class Folder {
         this.subFolders = subFolders;
         this.documents = documents;
     }
-    List<TextFile> getDocuments() {
+    List<TextFile> getTextFiles() {
         return this.documents;
     }
 

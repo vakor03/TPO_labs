@@ -13,6 +13,7 @@
       <module fileurl="file://$PROJECT_DIR$/lab4_1/lab4_1.iml" filepath="$PROJECT_DIR$/lab4_1/lab4_1.iml" />
       <module fileurl="file://$PROJECT_DIR$/lab4_3/lab4_3.iml" filepath="$PROJECT_DIR$/lab4_3/lab4_3.iml" />
       <module fileurl="file://$PROJECT_DIR$/lab4_4/lab4_4.iml" filepath="$PROJECT_DIR$/lab4_4/lab4_4.iml" />
+      <module fileurl="file://$PROJECT_DIR$/lab4_shared/lab4_shared.iml" filepath="$PROJECT_DIR$/lab4_shared/lab4_shared.iml" />
       <module fileurl="file://$PROJECT_DIR$/universityLabs.iml" filepath="$PROJECT_DIR$/universityLabs.iml" />
     </modules>
   </component>

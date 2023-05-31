@@ -6,26 +6,41 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        File file = new File("TestText\\Texts");
-        Folder folder = Folder.fromDirectory(file);
-        ExistWordsChecker existWordsChecker = new ExistWordsChecker(2);
+        File file = new File("C:\\Projects\\ParrallelComputing\\TPO_labs\\lab4_1/TestFolder");
+        Folder folder = Folder.loadFromDirectory(file);
+        RequiredWordsChecker requiredWordsChecker = new RequiredWordsChecker(2);
 
-        ArrayList<String> words = new ArrayList<>();
-        words.add("olexandr");
-        words.add("lorem");
-        words.add("unique11");
-        words.add("unique22");
-        words.add("unique33");
-        words.add("unique44");
+        List<String> words = new ArrayList<>();
+        words.add("Algorithm");
+        words.add("Java");
+        words.add("Networking");
+        words.add("Database");
+        words.add("Computer");
 
         long startTime = System.currentTimeMillis();
-        HashMap<String, List<String>> fileAndExistWords = existWordsChecker.findCommonWordsParallel(folder, words);
+        HashMap<String, List<String>> fileAndExistWords = requiredWordsChecker.findCommonWordsForkJoinPool(folder, words);
         long time = System.currentTimeMillis() - startTime;
+
+        int dontHaveRequiredWords = 0;
+        int haveNotAllRequiredWords = 0;
+        int haveAllRequiredWords = 0;
 
         for (var item: fileAndExistWords.entrySet()){
             System.out.println(item);
+            if (item.getValue().size() == 0){
+                dontHaveRequiredWords++;
+            }
+            else if (item.getValue().size() < words.size()){
+                haveNotAllRequiredWords++;
+            }
+            else{
+                haveAllRequiredWords++;
+            }
         }
-        System.out.println(fileAndExistWords.size());
-        System.out.println("\nTime: " + time);
+
+        System.out.println("\nDon't have required words: " + dontHaveRequiredWords);
+        System.out.println("Have not all required words: " + haveNotAllRequiredWords);
+        System.out.println("Have all required words: " + haveAllRequiredWords);
+        System.out.println("\nTime: " + time + " ms");
     }
 }
