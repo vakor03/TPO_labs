@@ -2,13 +2,13 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
-public class Document {
+public class TextFile {
     private final List<String> lines;
 
-    public Document(List<String> lines) {
+    public TextFile(List<String> lines) {
         this.lines = lines;
     }
 
@@ -16,9 +16,8 @@ public class Document {
         return this.lines;
     }
 
-    static Document fromFile(File file) throws IOException {
-        //System.out.println(file);
-        List<String> lines = new LinkedList<>();
+    static TextFile createFromFile(File file) throws IOException {
+        List<String> lines = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line = reader.readLine();
             while (line != null) {
@@ -26,7 +25,7 @@ public class Document {
                 line = reader.readLine();
             }
         }
-        return new Document(lines);
+        return new TextFile(lines);
     }
 }
 

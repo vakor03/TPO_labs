@@ -1,5 +1,6 @@
-import java.util.HashMap;
-import java.util.concurrent.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ForkJoinPool;
 
 public class WordCounter {
     private final ForkJoinPool forkJoinPool;
@@ -8,27 +9,21 @@ public class WordCounter {
         forkJoinPool = new ForkJoinPool(countThreads);
     }
 
-    public static String[] wordsIn(String line) {
+    public static String[] getAllWordsInLine(String line) {
         return line.trim().split("(\\s|\\p{Punct})+");
     }
 
-    public static HashMap<Integer, Integer> occurrencesCount(Document document) {
-        HashMap<Integer, Integer> countLengthsMap = new HashMap<>();
-        for (String line : document.getLines()) {
-            for (String word : wordsIn(line)) {
-                int length = word.length();
-                if (countLengthsMap.containsKey(length)) {
-                    countLengthsMap.put(length, countLengthsMap.get(length) + 1);
-                }
-                else {
-                    countLengthsMap.put(length, 1);
-                }
+    public static List<Integer> getAllWordLengths(TextFile textFile) {
+        List<Integer> wordLengths = new ArrayList<>();
+        for (String line : textFile.getLines()) {
+            for (String word : getAllWordsInLine(line)) {
+                wordLengths.add(word.length());
             }
         }
-        return countLengthsMap;
+        return wordLengths;
     }
 
-    public HashMap<Integer, Integer> occurrencesCountParallel(Folder folder) {
+    public List<Integer> getAllWordLenghtsForkJoin(Folder folder) {
         return forkJoinPool.invoke(new FolderSearchTask(folder));
     }
 

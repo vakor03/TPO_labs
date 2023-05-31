@@ -11,7 +11,6 @@ class FolderSearchTask extends RecursiveTask<HashSet<String>> {
         this.folder = folder;
     }
 
-
     @Override
     protected HashSet<String> compute() {
         HashSet<String> commonWord;

@@ -6,13 +6,13 @@ import java.util.Objects;
 
 public class Folder {
     private final List<Folder> subFolders;
-    private final List<Document> documents;
+    private final List<TextFile> documents;
 
-    public Folder(List<Folder> subFolders, List<Document> documents) {
+    public Folder(List<Folder> subFolders, List<TextFile> documents) {
         this.subFolders = subFolders;
         this.documents = documents;
     }
-    List<Document> getDocuments() {
+    List<TextFile> getDocuments() {
         return this.documents;
     }
 
@@ -21,14 +21,14 @@ public class Folder {
     }
 
     static Folder loadFromDirectory(File dir) throws IOException {
-        List<Document> documents = new LinkedList<>();
+        List<TextFile> documents = new LinkedList<>();
         List<Folder> subFolders = new LinkedList<>();
 
         for (File entry : Objects.requireNonNull(dir.listFiles())) {
             if (entry.isDirectory()) {
                 subFolders.add(Folder.loadFromDirectory(entry));
             } else {
-                documents.add(Document.fromFile(entry));
+                documents.add(TextFile.createFromFile(entry));
             }
         }
         return new Folder(subFolders, documents);
