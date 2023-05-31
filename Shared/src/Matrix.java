@@ -1,5 +1,9 @@
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+
 public class Matrix {
     private int[][] matrixData;
+    public static final int INT32_BYTE_SIZE = 4;
 
     public Matrix(int[][] matrix) {
         this.matrixData = matrix;
@@ -73,7 +77,7 @@ public class Matrix {
         }
     }
 
-    public int[] getAsBuffer()
+    public int[] toIntBuffer()
     {
         int [] array = new int[getRowsCount() * getColumnsCount()];
         int index = 0;
@@ -84,6 +88,17 @@ public class Matrix {
             }
         }
         return array;
+    }
+
+    public byte[] toByteBuffer() {
+        var buffer = ByteBuffer.allocate(getRowsCount() * getColumnsCount() * INT32_BYTE_SIZE);
+        buffer.order(ByteOrder.nativeOrder());
+        var intBuffer = buffer.asIntBuffer();
+        for (var ints : matrixData) {
+            intBuffer.put(ints);
+        }
+
+        return buffer.array();
     }
 
     public Matrix transpose() {

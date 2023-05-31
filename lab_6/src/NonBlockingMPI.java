@@ -68,7 +68,7 @@ public class NonBlockingMPI {
         Matrix matrix2 = MatrixHelper.createMatrixFromBuffer(matrix2Buffer, countRows, countColumn);
         Matrix resultMatrix = subMatrix1.multiply(matrix2);
 
-        int[] resultMatrixBuff = resultMatrix.getAsBuffer();
+        int[] resultMatrixBuff = resultMatrix.toIntBuffer();
 
         MPI.COMM_WORLD.Isend(startRowIndex,0, 1, MPI.INT, 0, TAG_WORKER);
         MPI.COMM_WORLD.Isend(endRowIndex,0, 1, MPI.INT, 0, TAG_WORKER);
@@ -97,8 +97,8 @@ public class NonBlockingMPI {
             }
 
             Matrix subMatrix1 = matrix1.sliceMatrix(startRowIndex, endRowIndex, countColumn);
-            int[] subMatrix1Buff = subMatrix1.getAsBuffer();
-            int[] matrix2Buff = matrix2.getAsBuffer();
+            int[] subMatrix1Buff = subMatrix1.toIntBuffer();
+            int[] matrix2Buff = matrix2.toIntBuffer();
 
             sendAssignmentToWorker(i, startRowIndex, endRowIndex, subMatrix1Buff, matrix2Buff);
         }
