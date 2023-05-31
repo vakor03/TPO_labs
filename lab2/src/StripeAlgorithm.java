@@ -7,29 +7,29 @@ public class StripeAlgorithm implements IMatrixMultiplicationAlgorithm {
         this.countThread = countThread;
     }
 
-    public int[][] multiply(int[][] matrixA, int[][] matrixB) {
-        int[][] result = new int[matrixA.length][matrixB[0].length];
-        int[][] transposedMatrixB = MatrixHelper.transposeMatrix(MatrixHelper.clone(matrixB));
+    public Matrix multiply(Matrix matrixA, Matrix matrixB) {
+        Matrix result =new Matrix(matrixA.getRowsCount(),matrixB.getColumnsCount());
+        Matrix transposedMatrixB = matrixB.clone().transpose();
 
         ExecutorService executor = Executors.newFixedThreadPool(countThread);
-        Future<Integer>[] futures = new Future[result.length * result[0].length];
+        Future<Integer>[] futures = new Future[result.getRowsCount() * result.getColumnsCount()];
 
-        for (int i = 0; i < matrixA[0].length; i++) {
-            for (int j = 0; j < matrixA.length; j++) {
+        for (int i = 0; i < matrixA.getColumnsCount(); i++) {
+            for (int j = 0; j < matrixA.getRowsCount(); j++) {
                 int rowIndex = j;
-                int colIndex = (j + i) % result[0].length;
-                int curIndex = rowIndex * result.length + colIndex;
+                int colIndex = (j + i) % result.getColumnsCount();
+                int curIndex = rowIndex * result.getRowsCount() + colIndex;
 
-                futures[curIndex] = executor.submit(new StripeWorker(matrixA[rowIndex], transposedMatrixB[colIndex]));
+                futures[curIndex] = executor.submit(new StripeWorker(matrixA.getRow(rowIndex), transposedMatrixB.getRow(colIndex)));
             }
         }
 
         executor.shutdown();
         try {
-            for (int i = 0; i < result.length; i++) {
-                for (int j = 0; j < result[0].length; j++) {
-                    var future = futures[i * result.length + j].get();
-                    result[i][j] = future;
+            for (int i = 0; i < result.getRowsCount(); i++) {
+                for (int j = 0; j < result.getColumnsCount(); j++) {
+                    var future = futures[i * result.getRowsCount() + j].get();
+                    result.set(i,j,future);
                 }
             }
         } catch (InterruptedException | ExecutionException e) {

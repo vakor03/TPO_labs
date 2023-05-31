@@ -1,17 +1,17 @@
 public class SequentialAlgorithm implements IMatrixMultiplicationAlgorithm {
     @Override
-    public int[][] multiply(int[][] matrixA, int[][] matrixB) {
-        int[][] result = new int[matrixA.length][matrixB[0].length];
-        for (int i = 0; i < matrixA.length; i++) {
-            for (int j = 0; j < matrixB[0].length; j++) {
+    public Matrix multiply(Matrix matrixA, Matrix matrixB) {
+        int[][] result = new int[matrixA.getRowsCount()][matrixB.getColumnsCount()];
+        for (int i = 0; i < matrixA.getRowsCount(); i++) {
+            for (int j = 0; j < matrixB.getColumnsCount(); j++) {
                 int value = 0;
-                for (int k = 0; k < matrixA[0].length; k++) {
-                    value += matrixA[i][k] * matrixB[k][j];
+                for (int k = 0; k < matrixA.getColumnsCount(); k++) {
+                    value += matrixA.get(i,k) * matrixB.get(k,j);
                 }
                 result[i][j] = value;
             }
         }
-        return result;
+        return new Matrix(result);
     }
 }
 

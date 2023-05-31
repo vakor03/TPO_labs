@@ -1,3 +1,3 @@
 public interface IMatrixMultiplicationAlgorithm {
-    int[][] multiply(int[][] matrixA, int[][] matrixB);
+    Matrix multiply(Matrix matrixA, Matrix matrixB);
 }
