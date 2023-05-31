@@ -1,18 +1,18 @@
 public class FasterSequentialAlgorithm implements IMatrixMultiplicationAlgorithm {
-    public int[][] multiply(int[][] matrixA, int[][] matrixB) {
-        int[][] result = new int[matrixA.length][matrixB[0].length];
-        int[][] transposedMatrixB = MatrixHelper.transposeMatrix(MatrixHelper.clone(matrixB));
+    public Matrix multiply(Matrix matrixA, Matrix matrixB) {
+        int[][] result = new int[matrixA.getRowsCount()][matrixB.getColumnsCount()];
+        Matrix transposedMatrixB = matrixB.clone().transpose();
 
-        for (int i = 0; i < matrixA[0].length; i++) {
-            for (int j = 0; j < matrixA.length; j++) {
+        for (int i = 0; i < matrixA.getColumnsCount(); i++) {
+            for (int j = 0; j < matrixA.getRowsCount(); j++) {
                 int rowIndex = j;
                 int colIndex = (j + i) % result[0].length;
 
-                result[rowIndex][colIndex] = multiply(matrixA[rowIndex], transposedMatrixB[colIndex]);
+                result[rowIndex][colIndex] = multiply(matrixA.getRow(rowIndex), transposedMatrixB.getRow(colIndex));
             }
         }
 
-        return result;
+        return new Matrix(result);
     }
 
     private int multiply(int[] row, int[] column) {
