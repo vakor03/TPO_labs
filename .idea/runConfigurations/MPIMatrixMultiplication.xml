@@ -1,0 +1,13 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="MPIMatrixMultiplication" type="Application" factoryName="Application" nameIsGenerated="true">
+    <envs>
+      <env name="MPJ_HOME" value="C:\mpj" />
+    </envs>
+    <option name="MAIN_CLASS_NAME" value="MPIMatrixMultiplication" />
+    <module name="lab_6" />
+    <option name="VM_PARAMETERS" value="-jar $MPJ_HOME$\lib\starter.jar -np 4" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
