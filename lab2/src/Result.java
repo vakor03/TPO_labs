@@ -1,17 +1,17 @@
 public class Result {
-    long time;
-    int[][] matrix;
+    private final long totalTime;
+    private final Matrix resultMatrix;
 
-    public Result(long time, int[][] matrix) {
-        this.time = time;
-        this.matrix = matrix;
+    public Result(Matrix resultMatrix, long totalTime) {
+        this.totalTime = totalTime;
+        this.resultMatrix = resultMatrix;
     }
 
-    public long getTime() {
-        return time;
+    public long getTotalTime() {
+        return totalTime;
     }
 
-    public int[][] getMatrix() {
-        return matrix;
+    public Matrix getResultMatrix() {
+        return resultMatrix;
     }
 }

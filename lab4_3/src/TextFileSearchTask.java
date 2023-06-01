@@ -10,6 +10,21 @@ class TextFileSearchTask extends RecursiveTask<HashSet<String>> {
 
     @Override
     protected HashSet<String> compute() {
-        return CommonWordCounter.getUniqueWordsInTextFile(textFile);
+        return getUniqueWordsInTextFile(textFile);
     }
+
+    private static HashSet<String> getUniqueWordsInTextFile(TextFile textFile) {
+        HashSet<String> uniqueWords = new HashSet<>();
+        for (String line : textFile.getLines()) {
+            for (String word : getWordsIn(line)) {
+                uniqueWords.add(word.toLowerCase());
+            }
+        }
+        return uniqueWords;
+    }
+
+    private static String[] getWordsIn(String line) {
+        return line.trim().split("(\\s|\\p{Punct})+");
+    }
+
 }

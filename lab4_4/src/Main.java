@@ -6,7 +6,7 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        File file = new File("C:\\Projects\\ParrallelComputing\\TPO_labs\\lab4_1/TestFolder");
+        File file = new File("C:\\Projects\\ParrallelComputing\\TPO_labs\\lab4_1/TestFolder1");
         Folder folder = Folder.loadFromDirectory(file);
         RequiredWordsChecker requiredWordsChecker = new RequiredWordsChecker(2);
 
@@ -14,7 +14,7 @@ public class Main {
         words.add("Algorithm");
         words.add("Java");
         words.add("Networking");
-        words.add("Database");
+        words.add("Parallel");
         words.add("Computer");
 
         long startTime = System.currentTimeMillis();

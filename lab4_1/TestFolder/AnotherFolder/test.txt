@@ -1,1 +1,11 @@
-Hello my name is Valerii
+Hello my name is Valerii Java
+words.add("Algorithm");
+        words.add("Java");
+        words.add("Networking");
+        words.add("Database");
+        words.add("Computer");
+        Algorithm
+        Java
+        Networking
+        Database
+        Computer

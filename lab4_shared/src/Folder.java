@@ -6,21 +6,20 @@ import java.util.Objects;
 
 public class Folder {
     private final List<Folder> subFolders;
-    private final List<TextFile> documents;
+    private final List<TextFile> textFiles;
 
-    public Folder(List<Folder> subFolders, List<TextFile> documents) {
+    public Folder(List<Folder> subFolders, List<TextFile> textFiles) {
         this.subFolders = subFolders;
-        this.documents = documents;
+        this.textFiles = textFiles;
     }
     List<TextFile> getTextFiles() {
-        return this.documents;
+        return this.textFiles;
     }
-
     List<Folder> getSubFolders() {
         return this.subFolders;
     }
 
-    static Folder loadFromDirectory(File dir) throws IOException {
+    public static Folder loadFromDirectory(File dir) throws IOException {
         List<TextFile> documents = new LinkedList<>();
         List<Folder> subFolders = new LinkedList<>();
 

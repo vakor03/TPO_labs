@@ -17,7 +17,6 @@ public class TextFile {
     public List<String> getLines() {
         return this.lines;
     }
-
     public String getName() {
         return this.name;
     }

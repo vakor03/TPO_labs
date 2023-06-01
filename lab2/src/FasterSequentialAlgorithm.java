@@ -1,5 +1,7 @@
 public class FasterSequentialAlgorithm implements IMatrixMultiplicationAlgorithm {
-    public Matrix multiply(Matrix matrixA, Matrix matrixB) {
+    public Result multiply(Matrix matrixA, Matrix matrixB) {
+        long startTime = System.currentTimeMillis();
+
         int[][] result = new int[matrixA.getRowsCount()][matrixB.getColumnsCount()];
         Matrix transposedMatrixB = matrixB.clone().transpose();
 
@@ -12,7 +14,7 @@ public class FasterSequentialAlgorithm implements IMatrixMultiplicationAlgorithm
             }
         }
 
-        return new Matrix(result);
+        return new Result(new Matrix(result), System.currentTimeMillis() - startTime );
     }
 
     private int multiply(int[] row, int[] column) {

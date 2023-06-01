@@ -4,10 +4,19 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        File file = new File("C:\\Projects\\ParrallelComputing\\TPO_labs\\lab4_1/TestFolder");
+        int[] threadsCount = {2, 4, 6, 8, 9};
+        for (var count : threadsCount) {
+            System.out.println("-------------------------");
+            System.out.println("Threads count: " + count);
+                        testResult(count);
+        }
+    }
+
+    private static void testResult(int threadsCount) throws IOException {
+        File file = new File("C:\\Projects\\ParrallelComputing\\TPO_labs\\lab4_1/TestFolder1");
         System.out.println(file.getAbsolutePath());
         Folder folder = Folder.loadFromDirectory(file);
-        WordCounter wordCounter = new WordCounter(2);
+        WordCounter wordCounter = new WordCounter(threadsCount);
 
         long startTime = System.currentTimeMillis();
         List<Integer> wordLengths = wordCounter.getAllWordLenghtsForkJoin(folder);
@@ -23,10 +32,10 @@ public class Main {
 
         int totalSquaredLength = 0;
         for (var length : wordLengths) {
-            totalSquaredLength += Math.pow(length,2);
+            totalSquaredLength += Math.pow(length, 2);
         }
 
-        double D = ((double) totalSquaredLength /count) - Math.pow(meanLength,2);
+        double D = ((double) totalSquaredLength / count) - Math.pow(meanLength, 2);
         double G = Math.sqrt(D);
 
         System.out.println("Count: " + count);
@@ -34,6 +43,5 @@ public class Main {
         System.out.println("Dispersion: " + D);
         System.out.println("Mean square deviation: " + G);
         System.out.println("\nTime: " + totalTime + " ms");
-
     }
 }

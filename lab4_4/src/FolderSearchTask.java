@@ -13,7 +13,6 @@ class FolderSearchTask extends RecursiveTask<HashMap<String, List<String>>> {
         this.wordsMustExist = wordsMustExist;
     }
 
-
     @Override
     protected HashMap<String, List<String>> compute() {
         HashMap<String, List<String>> filesWithRequiredWords = new HashMap<>();

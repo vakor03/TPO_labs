@@ -7,9 +7,11 @@ public class StripeAlgorithm implements IMatrixMultiplicationAlgorithm {
         this.countThread = countThread;
     }
 
-    public Matrix multiply(Matrix matrixA, Matrix matrixB) {
-        Matrix result =new Matrix(matrixA.getRowsCount(),matrixB.getColumnsCount());
-        Matrix transposedMatrixB = matrixB.clone().transpose();
+    public Result multiply(Matrix matrixA, Matrix matrixB) {
+        long startTime = System.currentTimeMillis();
+
+        Matrix result = new Matrix(matrixA.getRowsCount(), matrixB.getColumnsCount());
+        Matrix transposedMatrixB = matrixB.transpose();
 
         ExecutorService executor = Executors.newFixedThreadPool(countThread);
         Future<Integer>[] futures = new Future[result.getRowsCount() * result.getColumnsCount()];
@@ -20,22 +22,25 @@ public class StripeAlgorithm implements IMatrixMultiplicationAlgorithm {
                 int colIndex = (j + i) % result.getColumnsCount();
                 int curIndex = rowIndex * result.getRowsCount() + colIndex;
 
-                futures[curIndex] = executor.submit(new StripeWorker(matrixA.getRow(rowIndex), transposedMatrixB.getRow(colIndex)));
+                futures[curIndex] = executor.submit(new StripeWorker(matrixA.getRow(rowIndex),
+                        transposedMatrixB.getRow(colIndex)));
             }
         }
 
         executor.shutdown();
+
         try {
             for (int i = 0; i < result.getRowsCount(); i++) {
                 for (int j = 0; j < result.getColumnsCount(); j++) {
                     var future = futures[i * result.getRowsCount() + j].get();
-                    result.set(i,j,future);
+                    result.set(i, j, future);
                 }
             }
         } catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException(e);
         }
-        return result;
+
+        return new Result(result, System.currentTimeMillis() - startTime);
     }
 }
 

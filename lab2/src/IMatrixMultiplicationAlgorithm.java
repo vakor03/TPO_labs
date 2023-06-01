@@ -1,3 +1,3 @@
 public interface IMatrixMultiplicationAlgorithm {
-    Matrix multiply(Matrix matrixA, Matrix matrixB);
+    Result multiply(Matrix matrixA, Matrix matrixB);
 }

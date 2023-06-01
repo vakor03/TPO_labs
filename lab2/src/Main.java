@@ -1,58 +1,64 @@
-// Press Shift twice to open the Search Everywhere dialog and type `show whitespaces`,
-// then press Enter. You can now see whitespace characters in your code.
 public class Main {
     public static void main(String[] args) {
-        Matrix matrixA = MatrixHelper.generateRandomMatrix(500);
-        Matrix matrixB = MatrixHelper.generateRandomMatrix(500);
+//        testAlgorithmsAccuracy();
 
-        checkAlgorithmAccuracy(matrixA, matrixB, new StripeAlgorithm(2));
-        checkAlgorithmAccuracy(matrixA, matrixB, new FoxAlgorithm(2));
-        checkAlgorithmAccuracy(matrixA, matrixB, new FasterSequentialAlgorithm());
-//        for (int i = 0; i < 10; i++) {
-//            IMatrixMultiplicationAlgorithm multiplicationAlgorithm = new StripeAlgorithm(i + 1);
-//            System.out.print("Stripe algorithm with " + (i + 1) + " threads: => ");
-//            checkAlgorithmSpeed(matrixA, matrixB, multiplicationAlgorithm, 10);
-//        }
-//
-//        System.out.println();
-//
-//        for (int i = 1; i < 50; i++) {
-//            int threadsCount = i+1;
-//            IMatrixMultiplicationAlgorithm multiplicationAlgorithm2 = new FoxAlgorithm(threadsCount, 500);
-//            System.out.print("Fox algorithm with " + threadsCount + " threads: => ");
-//            checkAlgorithmSpeed(matrixA, matrixB, multiplicationAlgorithm2, 1);
-//        }
-//
-//        System.out.println();
-//        System.out.print("Sequential algorithm: => ");
-//        checkAlgorithmSpeed(matrixA, matrixB, new SequentialAlgorithm(), 1);
-//
-//        System.out.println();
-//        System.out.print("Faster sequential algorithm: => ");
-//        checkAlgorithmSpeed(matrixA, matrixB, new FasterSequentialAlgorithm(), 1);
+        int[] matrixSizes = {500, 1000, 1500, 2000, 2500, 3000, 3500};
+        int[] threadsCounts = {2, 4, 8, 9};
 
-
+        testAlgorithmsSpeed(matrixSizes, threadsCounts);
     }
 
-    static void checkAlgorithmAccuracy(Matrix matrixA, Matrix matrixB, IMatrixMultiplicationAlgorithm multiplicationAlgorithm) {
-        Matrix result = multiplicationAlgorithm.multiply(matrixA, matrixB);
-        Matrix result2 = new SequentialAlgorithm().multiply(matrixA, matrixB);
-        System.out.println(result.equals(result2) ? "Matrices are identical" : "Matrices are not identical");
-    }
+    private static void testAlgorithmsSpeed(int[] matrixSizes, int[] threadsCounts) {
+        for (int matrixSize : matrixSizes) {
+            Matrix matrixA = MatrixHelper.generateRandomMatrix(matrixSize);
+            Matrix matrixB = MatrixHelper.generateRandomMatrix(matrixSize);
+            System.out.println("-------------------------");
+            System.out.println("Matrix size: " + matrixSize);
 
-    static void checkAlgorithmSpeed(Matrix matrixA, Matrix matrixB, IMatrixMultiplicationAlgorithm multiplicationAlgorithm, int iterations) {
-        long[] times = new long[iterations];
-        for (int i = 0; i < iterations; i++) {
-            long startTime = System.currentTimeMillis();
-            multiplicationAlgorithm.multiply(matrixA, matrixB);
-            long endTime = System.currentTimeMillis();
-            times[i] = endTime - startTime;
+//            long sequentialTime = checkAlgorithmSpeed(matrixA, matrixB, new SequentialAlgorithm(), 5);
+//            System.out.println("\nSequential algorithm: " + sequentialTime + " ms");
+
+            for (int threads : threadsCounts) {
+                System.out.println("\nThreads count: " + threads);
+//                long stripeTime = checkAlgorithmSpeed(matrixA, matrixB, new StripeAlgorithm(threads), 5);
+                long foxTime = checkAlgorithmSpeed(matrixA, matrixB, new FoxAlgorithm(threads), 5);
+
+//                System.out.println("\tStripe algorithm with " + threads + " threads: " + stripeTime + " ms");
+                System.out.println("\tFox algorithm with " + threads + " threads: " + foxTime + " ms");
+            }
         }
+    }
+
+    static void testAlgorithmsAccuracy() {
+        Matrix matrixA = MatrixHelper.generateRandomMatrix(4);
+        Matrix matrixB = MatrixHelper.generateRandomMatrix(4);
+
+        Matrix resultSequential = new SequentialAlgorithm().multiply(matrixA, matrixB).getResultMatrix();
+        Matrix resultStripe = new StripeAlgorithm(2).multiply(matrixA, matrixB).getResultMatrix();
+        Matrix resultFox = new FoxAlgorithm(2).multiply(matrixA, matrixB).getResultMatrix();
+
+        System.out.println("Matrix A:");
+        matrixA.print();
+
+        System.out.println("\nMatrix B:");
+        matrixB.print();
+
+        System.out.println("\nSequential result:");
+        resultSequential.print();
+
+        System.out.println("\nStripe result:");
+        resultStripe.print();
+
+        System.out.println("\nFox result:");
+        resultFox.print();
+    }
+
+    static long checkAlgorithmSpeed(Matrix matrixA, Matrix matrixB, IMatrixMultiplicationAlgorithm multiplicationAlgorithm, int iterations) {
         long sum = 0;
         for (int i = 0; i < iterations; i++) {
-            sum += times[i];
+            sum += multiplicationAlgorithm.multiply(matrixA, matrixB).getTotalTime();
         }
-        System.out.println("Average time: " + (sum / iterations) + " milliseconds");
+        return sum / iterations;
     }
 
 }

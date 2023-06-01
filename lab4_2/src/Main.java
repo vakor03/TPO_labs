@@ -1,78 +1,36 @@
 public class Main {
     public static void main(String[] args) {
-        int sizeMatrix = 2000;
-        int countThread = 16;
-        boolean printedMatrices = false;
+        int[] matrixSizes = {500, 1000, 1500, 2000, 2500, 3000, 3500};
+        int[] threadsCounts = {2, 4, 8, 9};
 
-        System.out.print("Size matrix: ");
-        System.out.println(sizeMatrix);
-        System.out.print("count Thread: ");
-        System.out.println(countThread);
+        testAlgorithmsSpeed(matrixSizes, threadsCounts);
+    }
+    private static void testAlgorithmsSpeed(int[] matrixSizes, int[] threadsCounts) {
+        for (int matrixSize : matrixSizes) {
+            Matrix matrixA = MatrixHelper.generateRandomMatrix(matrixSize);
+            Matrix matrixB = MatrixHelper.generateRandomMatrix(matrixSize);
+            System.out.println("-------------------------");
+            System.out.println("Matrix size: " + matrixSize);
 
-        Matrix matrix1 = MatrixHelper.generateRandomMatrix(sizeMatrix);
+            long sequentialTime = checkAlgorithmSpeed(matrixA, matrixB, new SequentialAlgorithm(), 1);
+            System.out.println("\nSequential algorithm: " + sequentialTime + " ms");
 
-        Matrix matrix2 = MatrixHelper.generateRandomMatrix(sizeMatrix);
-        if(printedMatrices){
-            matrix1.print();
-            matrix2.print();
+            for (int threads : threadsCounts) {
+                System.out.println("\nThreads count: " + threads);
+
+                long foxForkJoinTime = checkAlgorithmSpeed(matrixA, matrixB, new FoxAlgorithmForkJoin(threads), 5);
+                long foxTime = checkAlgorithmSpeed(matrixA, matrixB, new FoxAlgorithm(threads), 5);
+
+                System.out.println("\tFox algorithm with " + threads + " threads: " + foxTime + " ms");
+                System.out.println("\tFox algorithm with " + threads + " threads and ForkJoin: " + foxForkJoinTime + " ms");
+            }
         }
-
-        // Not parallel algorithm multiply matrices
-        long startTime = System.currentTimeMillis();
-
-//        Matrix resultMatrix1 = new SequentialAlgorithm().multiply(matrix1, matrix2);
-
-        long endTime = System.currentTimeMillis();
-        System.out.print("Time working standard algo: ");
-        System.out.println(endTime - startTime);
-
-        if(printedMatrices) {
-//            resultMatrix1.print();
+    }
+    static long checkAlgorithmSpeed(Matrix matrixA, Matrix matrixB, IMatrixMultiplicationAlgorithm multiplicationAlgorithm, int iterations) {
+        long sum = 0;
+        for (int i = 0; i < iterations; i++) {
+            sum += multiplicationAlgorithm.multiply(matrixA, matrixB).getTotalTime();
         }
-
-        long totalTime = 0;
-        int countTest = 5;
-
-        // Fox algorithm multiply matrices
-        totalTime = 0;
-        Matrix resultMatrix2 = null;
-        for (int i = 0; i < countTest; i++) {
-            startTime = System.currentTimeMillis();
-            FoxAlgorithm foxAlgorithm = new FoxAlgorithm(countThread);
-            resultMatrix2 = foxAlgorithm.multiply(matrix1, matrix2);
-            endTime = System.currentTimeMillis();
-            totalTime += endTime - startTime;
-        }
-
-
-        System.out.print("Time working fox algo (FixedThreadPool): ");
-        System.out.println(totalTime / countTest);
-
-        if(printedMatrices) {
-            resultMatrix2.print();
-        }
-
-        // Fox algorithm multiply matrices forkjoin
-        totalTime = 0;
-        Matrix resultMatrix3 = null;
-        for (int i = 0; i < countTest; i++) {
-            startTime = System.currentTimeMillis();
-            FoxAlgorithmForkJoin foxAlgorithmForkJoin = new FoxAlgorithmForkJoin(countThread);
-            resultMatrix3 = foxAlgorithmForkJoin.multiply(matrix1, matrix2);
-            endTime = System.currentTimeMillis();
-            totalTime += endTime - startTime;
-        }
-
-        System.out.print("Time working fox algo (ForkJoinPool): ");
-        System.out.println(totalTime / countTest);
-
-        if(printedMatrices) {
-            resultMatrix3.print();
-        }
-
-
-
-//        System.out.println(resultMatrix1.equals(resultMatrix2));
-//        System.out.println(resultMatrix1.equals(resultMatrix3));
+        return sum / iterations;
     }
 }
