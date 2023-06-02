@@ -2,9 +2,10 @@ import mpi.MPI;
 
 public class CollectiveMPIMain {
 
-    public static void main(String[] args){int size = 3000;
-        Matrix matrix1 = MatrixHelper.generateRandomMatrix(1000, 1000, 0, 10);
-        Matrix matrix2 = MatrixHelper.generateRandomMatrix(1000, 1000, 0, 10);
+    public static void main(String[] args){
+        int size = 3000;
+        Matrix matrix1 = MatrixHelper.generateRandomMatrix(size);
+        Matrix matrix2 = MatrixHelper.generateRandomMatrix(size);
 
         CollectiveMPI collectiveMPI = new CollectiveMPI(args);
         Result collectiveMPIResult = collectiveMPI.multiply(matrix1, matrix2);
