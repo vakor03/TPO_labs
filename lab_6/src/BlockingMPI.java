@@ -7,8 +7,6 @@ public class BlockingMPI implements IMatrixMultiplicationAlgorithm {
     private static final int TAG_WORKER = 2;
     private static final int MASTER_ID = 0;
     private final String[] args;
-    private int columnsCount;
-    private int rowsCount;
     public BlockingMPI(String[] args) {
         this.args = args;
     }
@@ -17,8 +15,8 @@ public class BlockingMPI implements IMatrixMultiplicationAlgorithm {
     public Result multiply(Matrix matrixA, Matrix matrixB) {
         try {
             long startTime = System.currentTimeMillis();
-            rowsCount = matrixA.getRowsCount();
-            columnsCount = matrixB.getColumnsCount();
+            int rowsCount = matrixA.getRowsCount();
+            int columnsCount = matrixB.getColumnsCount();
             Matrix resultMatrix = new Matrix(rowsCount, columnsCount);
 
             MPI.Init(args);
@@ -37,7 +35,7 @@ public class BlockingMPI implements IMatrixMultiplicationAlgorithm {
                 masterProcess(matrixA, matrixB, resultMatrix, workersCount);
                 return new Result(resultMatrix, (System.currentTimeMillis() - startTime));
             } else {
-                workerProcess();
+                workerProcess(rowsCount, columnsCount);
             }
             return null;
         } finally {
@@ -46,7 +44,7 @@ public class BlockingMPI implements IMatrixMultiplicationAlgorithm {
     }
 
 
-    private void workerProcess() {
+    private void workerProcess(int rowsCount, int columnsCount) {
         int[] startRowIndex = new int[1];
         int[] endRowIndex = new int[1];
         MPI.COMM_WORLD.Recv(startRowIndex, 0, 1, MPI.INT, 0, TAG_MASTER);
@@ -59,66 +57,53 @@ public class BlockingMPI implements IMatrixMultiplicationAlgorithm {
         MPI.COMM_WORLD.Recv(subMatrix1Buffer, 0, sizeSubMatrix1Buffer, MPI.INT, 0, TAG_MASTER);
         MPI.COMM_WORLD.Recv(matrix2Buffer, 0, sizeMatrix2Buffer, MPI.INT, 0, TAG_MASTER);
 
-        Matrix subMatrix1 = MatrixHelper.createMatrixFromBuffer(subMatrix1Buffer,
+        Matrix subMatrix1 = Matrix.fromIntArray(subMatrix1Buffer,
                 endRowIndex[0] - startRowIndex[0] + 1, columnsCount);
-        Matrix matrix2 = MatrixHelper.createMatrixFromBuffer(matrix2Buffer, rowsCount, columnsCount);
+        Matrix matrix2 = Matrix.fromIntArray(matrix2Buffer, rowsCount, columnsCount);
         Matrix resultMatrix = subMatrix1.multiply(matrix2);
 
-        int[] resultMatrixBuffer = resultMatrix.toIntBuffer();
+        int[] resultMatrixBuffer = resultMatrix.toIntArray();
 
         MPI.COMM_WORLD.Send(startRowIndex, 0, 1, MPI.INT, 0, TAG_WORKER);
         MPI.COMM_WORLD.Send(endRowIndex, 0, 1, MPI.INT, 0, TAG_WORKER);
         MPI.COMM_WORLD.Send(resultMatrixBuffer, 0, resultMatrixBuffer.length, MPI.INT, 0, TAG_WORKER);
     }
 
-    private void masterProcess(Matrix matrix1, Matrix matrix2, Matrix resultMatrix, int countWorkers) {
-        int rowsForOneWorker = rowsCount / countWorkers;
-        int extraRows = rowsCount % countWorkers;
+    private void masterProcess(Matrix matrix1, Matrix matrix2, Matrix resultMatrix, int workers) {
+        int rowsForOneWorker = resultMatrix.getRowsCount() / workers;
+        int extraRows = resultMatrix.getRowsCount() % workers;
 
-        sendAssignmentsToWorkers(matrix1, matrix2, countWorkers, rowsForOneWorker, extraRows);
+        for (int i = 1; i <= workers; i++) {
+            int startRowIndex = (i - 1) * rowsForOneWorker;
+            int endRowIndex = startRowIndex + rowsForOneWorker - 1;
+            if (i == workers) {
+                endRowIndex += extraRows;
+            }
 
-        receiveResultsFromWorkers(resultMatrix, countWorkers);
-    }
+            Matrix subMatrix1 = matrix1.sliceMatrix(startRowIndex, endRowIndex, resultMatrix.getColumnsCount());
+            int[] subMatrix1Buffer = subMatrix1.toIntArray();
+            int[] matrix2Buffer = matrix2.toIntArray();
 
-    private void receiveResultsFromWorkers(Matrix resultMatrix, int countWorkers) {
-        for (int i = 1; i <= countWorkers; i++) {
+            MPI.COMM_WORLD.Send(new int[]{startRowIndex}, 0, 1, MPI.INT, i, TAG_MASTER);
+            MPI.COMM_WORLD.Send(new int[]{endRowIndex}, 0, 1, MPI.INT, i, TAG_MASTER);
+            MPI.COMM_WORLD.Send(subMatrix1Buffer, 0, subMatrix1Buffer.length, MPI.INT, i, TAG_MASTER);
+            MPI.COMM_WORLD.Send(matrix2Buffer, 0, matrix2Buffer.length, MPI.INT, i, TAG_MASTER);
+        }
+
+        for (int i = 1; i <= workers; i++) {
             int[] startRowIndex = new int[1];
             int[] endRowIndex = new int[1];
             MPI.COMM_WORLD.Recv(startRowIndex, 0, 1, MPI.INT, i, TAG_WORKER);
             MPI.COMM_WORLD.Recv(endRowIndex, 0, 1, MPI.INT, i, TAG_WORKER);
 
-            int countElemsResultBuffer = (endRowIndex[0] - startRowIndex[0] + 1) * columnsCount * Integer.BYTES;
+            int countElemsResultBuffer = (endRowIndex[0] - startRowIndex[0] + 1) * resultMatrix.getColumnsCount() * Integer.BYTES;
             int[] resultMatrixBuffer = new int[countElemsResultBuffer];
             MPI.COMM_WORLD.Recv(resultMatrixBuffer, 0,
                     countElemsResultBuffer, MPI.INT, i, TAG_WORKER);
-            Matrix subMatrix = MatrixHelper.createMatrixFromBuffer(resultMatrixBuffer,
-                    endRowIndex[0] - startRowIndex[0] + 1, columnsCount);
+            Matrix subMatrix = Matrix.fromIntArray(resultMatrixBuffer,
+                    endRowIndex[0] - startRowIndex[0] + 1, resultMatrix.getColumnsCount());
 
-            resultMatrix.updateMatrixSlice(subMatrix, startRowIndex[0], endRowIndex[0], columnsCount);
+            resultMatrix.changeSlice(subMatrix, startRowIndex[0], endRowIndex[0], resultMatrix.getColumnsCount());
         }
-    }
-
-    private void sendAssignmentsToWorkers(Matrix matrix1, Matrix matrix2, int countWorkers, int rowsForOneWorker, int extraRows) {
-        for (int i = 1; i <= countWorkers; i++) {
-            int startRowIndex = (i - 1) * rowsForOneWorker;
-            int endRowIndex = startRowIndex + rowsForOneWorker - 1;
-            if (i == countWorkers) {
-                endRowIndex += extraRows;
-            }
-
-            Matrix subMatrix1 = matrix1.sliceMatrix(startRowIndex, endRowIndex, columnsCount);
-            int[] subMatrix1Buffer = subMatrix1.toIntBuffer();
-            int[] matrix2Buffer = matrix2.toIntBuffer();
-
-            sendAssignmentToWorker(i, startRowIndex, endRowIndex, subMatrix1Buffer, matrix2Buffer);
-        }
-    }
-
-    private void sendAssignmentToWorker(int workerIndex, int startRowIndex, int endRowIndex,
-                                        int[] subMatrix1Buffer, int[] matrix2Buffer) {
-        MPI.COMM_WORLD.Send(new int[]{startRowIndex}, 0, 1, MPI.INT, workerIndex, TAG_MASTER);
-        MPI.COMM_WORLD.Send(new int[]{endRowIndex}, 0, 1, MPI.INT, workerIndex, TAG_MASTER);
-        MPI.COMM_WORLD.Send(subMatrix1Buffer, 0, subMatrix1Buffer.length, MPI.INT, workerIndex, TAG_MASTER);
-        MPI.COMM_WORLD.Send(matrix2Buffer, 0, matrix2Buffer.length, MPI.INT, workerIndex, TAG_MASTER);
     }
 }

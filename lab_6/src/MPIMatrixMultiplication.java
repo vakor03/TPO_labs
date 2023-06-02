@@ -2,7 +2,7 @@ import mpi.MPI;
 
 public class MPIMatrixMultiplication {
     public static void main(String[] args) {
-        int size = 3000;
+        int size = 500;
         boolean blocking = false;
         Matrix matrix1 = MatrixHelper.generateRandomMatrix(size);
         Matrix matrix2 = MatrixHelper.generateRandomMatrix(size);
@@ -16,8 +16,8 @@ public class MPIMatrixMultiplication {
             System.out.println("Blocking MPI: ");
             System.out.println("Matrix size: " + size);
             System.out.println("Processors count: " + MPI.COMM_WORLD.Size());
-//            System.out.println(blockingMPIResult.getResultMatrix().equals(matrix1.multiply(matrix2)) ?
-//                    "Result is Correct" : "Result is Incorrect");
+            System.out.println(blockingMPIResult.getResultMatrix().equals(matrix1.multiply(matrix2)) ?
+                    "Result is Correct" : "Result is Incorrect");
             System.out.println("Total time: " + blockingMPIResult.getTotalTime());
         } else {
             NonBlockingMPI nonBlockingMPI = new NonBlockingMPI(args);
@@ -29,8 +29,8 @@ public class MPIMatrixMultiplication {
             System.out.println("Non-Blocking MPI: ");
             System.out.println("Matrix size: " + size);
             System.out.println("Processors count: " + MPI.COMM_WORLD.Size());
-//            System.out.println(nonBlockingMPIResult.getResultMatrix().equals(matrix1.multiply(matrix2)) ?
-//                    "Result is Correct" : "Result is Incorrect");
+            System.out.println(nonBlockingMPIResult.getResultMatrix().equals(matrix1.multiply(matrix2)) ?
+                    "Result is Correct" : "Result is Incorrect");
             System.out.println("Total time: " + nonBlockingMPIResult.getTotalTime());
         }
 

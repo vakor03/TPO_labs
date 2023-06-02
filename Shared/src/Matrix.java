@@ -68,7 +68,7 @@ public class Matrix {
         return subMatrix;
     }
 
-    public void updateMatrixSlice(Matrix matrix, int indexStartRow, int indexEndRow, int countColumns)
+    public void changeSlice(Matrix matrix, int indexStartRow, int indexEndRow, int countColumns)
     {
         for (int i = indexStartRow; i <= indexEndRow; i++) {
             for (int j = 0; j < countColumns; j++) {
@@ -77,7 +77,7 @@ public class Matrix {
         }
     }
 
-    public int[] toIntBuffer()
+    public int[] toIntArray()
     {
         int [] array = new int[getRowsCount() * getColumnsCount()];
         int index = 0;
@@ -138,5 +138,18 @@ public class Matrix {
             }
         }
         return new Matrix(result);
+    }
+
+    public static Matrix fromIntArray(int[] array, int rowsCount, int columnsCount) {
+        int[][] matrixData = new int[rowsCount][columnsCount];
+
+        int arrayIndex = 0;
+        for (int i = 0; i < rowsCount; i++) {
+            for (int j = 0; j < columnsCount; j++) {
+                matrixData[i][j] = array[arrayIndex];
+                arrayIndex++;
+            }
+        }
+        return new Matrix(matrixData);
     }
 }
