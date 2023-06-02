@@ -37,23 +37,19 @@ class SearchTask extends RecursiveTask<List<Integer>> {
     }
 
     private static List<Integer> getAllLengthsInFile(File file) {
-        String path = file.getPath() + file.getName();
-        List<String> lines = new ArrayList<>();
+        List<Integer> wordLengths = new ArrayList<>();
+        
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line = reader.readLine();
             while (line != null) {
-                lines.add(line);
+                for (String word : getAllWordsInLine(line)) {
+                    wordLengths.add(word.length());
+                }
                 line = reader.readLine();
             }
         } catch (Exception ignored) {
         }
-        
-        List<Integer> wordLengths = new ArrayList<>();
-        for (String line : lines) {
-            for (String word : getAllWordsInLine(line)) {
-                wordLengths.add(word.length());
-            }
-        }
+
         return wordLengths;
     }
 
