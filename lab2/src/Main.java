@@ -15,16 +15,16 @@ public class Main {
             System.out.println("-------------------------");
             System.out.println("Matrix size: " + matrixSize);
 
-//            long sequentialTime = checkAlgorithmSpeed(matrixA, matrixB, new SequentialAlgorithm(), 5);
-//            System.out.println("\nSequential algorithm: " + sequentialTime + " ms");
+            long sequentialTime = checkAlgorithmSpeed(matrixA, matrixB, new SequentialAlgorithm(), 5);
+            System.out.println("\nSequential algorithm: " + sequentialTime + " ms");
 
             for (int threads : threadsCounts) {
-                System.out.println("\nThreads count: " + threads);
+//                System.out.println("\nThreads count: " + threads);
 //                long stripeTime = checkAlgorithmSpeed(matrixA, matrixB, new StripeAlgorithm(threads), 5);
-                long foxTime = checkAlgorithmSpeed(matrixA, matrixB, new FoxAlgorithm(threads), 5);
+//                long foxTime = checkAlgorithmSpeed(matrixA, matrixB, new FoxAlgorithm(threads), 5);
 
 //                System.out.println("\tStripe algorithm with " + threads + " threads: " + stripeTime + " ms");
-                System.out.println("\tFox algorithm with " + threads + " threads: " + foxTime + " ms");
+//                System.out.println("\tFox algorithm with " + threads + " threads: " + foxTime + " ms");
             }
         }
     }

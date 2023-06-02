@@ -3,7 +3,7 @@ import mpi.MPI;
 public class MPIMatrixMultiplication {
     public static void main(String[] args) {
         int size = 3000;
-        boolean blocking = true;
+        boolean blocking = false;
         Matrix matrix1 = MatrixHelper.generateRandomMatrix(size);
         Matrix matrix2 = MatrixHelper.generateRandomMatrix(size);
 
