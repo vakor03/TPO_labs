@@ -9,8 +9,8 @@ public class NonBlockingMPI {
     private static final int MASTER_ID = 0;
 
     public static void main(String[] args) {
-        Matrix matrixA = MatrixHelper.generateRandomMatrix(1000);
-        Matrix matrixB = MatrixHelper.generateRandomMatrix(1000);
+        Matrix matrixA = MatrixHelper.generateRandomMatrix(1500);
+        Matrix matrixB = MatrixHelper.generateRandomMatrix(1500);
 
         try{
             long startTime = System.currentTimeMillis();
@@ -33,6 +33,7 @@ public class NonBlockingMPI {
             if(taskID == MASTER_ID){
                 masterProcess(matrixA, matrixB, resultMatrix, workers);
 
+                System.out.println("NonBlockingMPI");
                 System.out.println("Total time: " + (System.currentTimeMillis() - startTime) + " ms");
                 System.out.println("Matrix size: " + rowsCount + "x" + columnsCount);
                 System.out.println("Workers count: " + workers);

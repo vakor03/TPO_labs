@@ -7,8 +7,8 @@ public class BlockingMPI {
     private static final int TAG_WORKER = 2;
     private static final int MASTER_ID = 0;
     public static void main(String[] args) {
-        Matrix matrixA = MatrixHelper.generateRandomMatrix(1000);
-        Matrix matrixB = MatrixHelper.generateRandomMatrix(1000);
+        Matrix matrixA = MatrixHelper.generateRandomMatrix(1500);
+        Matrix matrixB = MatrixHelper.generateRandomMatrix(1500);
 
         try {
             long startTime = System.currentTimeMillis();
@@ -30,6 +30,8 @@ public class BlockingMPI {
 
             if (taskID == MASTER_ID) {
                 masterProcess(matrixA, matrixB, resultMatrix, workersCount);
+
+                System.out.println("BlockingMPI");
                 System.out.println("Total time: " + (System.currentTimeMillis() - startTime) + " ms");
                 System.out.println("Matrix size: " + rowsCount + "x" + columnsCount);
                 System.out.println("Workers count: " + workersCount);
