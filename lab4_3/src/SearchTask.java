@@ -1,29 +1,29 @@
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.RecursiveTask;
 
-class FolderSearchTask extends RecursiveTask<HashSet<String>> {
-    private final Folder folder;
+class SearchTask extends RecursiveTask<HashSet<String>> {
+    private final File file;
 
-    FolderSearchTask(Folder folder) {
-        this.folder = folder;
+    SearchTask(File file) {
+        this.file = file;
     }
 
     @Override
     protected HashSet<String> compute() {
+        if (!file.isDirectory()) {
+            return getUniqueWordsInFile(file);
+        }
         HashSet<String> commonWords;
         List<RecursiveTask<HashSet<String>>> tasks = new ArrayList<>();
 
-        for (Folder subFolder : folder.getSubFolders()) {
-            FolderSearchTask task = new FolderSearchTask(subFolder);
-            tasks.add(task);
-            task.fork();
-        }
-
-        for (TextFile textFile : folder.getTextFiles()) {
-            TextFileSearchTask task = new TextFileSearchTask(textFile);
+        for (File entry : Objects.requireNonNull(file.listFiles())) {
+            SearchTask task = new SearchTask(entry);
             tasks.add(task);
             task.fork();
         }
@@ -34,5 +34,26 @@ class FolderSearchTask extends RecursiveTask<HashSet<String>> {
         }
 
         return commonWords;
+    }
+
+    private static HashSet<String> getUniqueWordsInFile(File file) {
+        HashSet<String> uniqueWords = new HashSet<>();
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line = reader.readLine();
+            while (line != null) {
+                for (String word : getWordsIn(line)) {
+                    uniqueWords.add(word.toLowerCase());
+                }
+                line = reader.readLine();
+            }
+        } catch (Exception ignored) {
+        }
+
+        return uniqueWords;
+    }
+
+    private static String[] getWordsIn(String line) {
+        return line.trim().split("(\\s|\\p{Punct})+");
     }
 }

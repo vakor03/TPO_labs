@@ -4,12 +4,11 @@ import java.util.HashSet;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        File file = new File("C:\\Projects\\ParrallelComputing\\TPO_labs\\lab4_1/TestFolder1");
-        Folder folder = Folder.loadFromDirectory(file);
+        File file = new File("C:\\Projects\\ParrallelComputing\\TPO_labs\\lab4_1/TestFolder2");
         CommonWordCounter commonWordSearcher = new CommonWordCounter(2);
 
         long startTime = System.currentTimeMillis();
-        HashSet<String> commonWords = commonWordSearcher.findCommonWordsForkJoin(folder);
+        HashSet<String> commonWords = commonWordSearcher.findCommonWordsForkJoin(file);
         long time = System.currentTimeMillis() - startTime;
 
         System.out.println("Common words: " + commonWords);

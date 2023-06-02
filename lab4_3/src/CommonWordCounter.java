@@ -1,3 +1,4 @@
+import java.io.File;
 import java.util.HashSet;
 import java.util.concurrent.ForkJoinPool;
 
@@ -8,7 +9,7 @@ public class CommonWordCounter {
         forkJoinPool = new ForkJoinPool(countThreads);
     }
 
-    public HashSet<String> findCommonWordsForkJoin(Folder folder) {
-        return forkJoinPool.invoke(new FolderSearchTask(folder));
+    public HashSet<String> findCommonWordsForkJoin(File file) {
+        return forkJoinPool.invoke(new SearchTask(file));
     }
 }
