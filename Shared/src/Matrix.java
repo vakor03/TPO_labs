@@ -3,7 +3,7 @@ import java.nio.ByteOrder;
 
 public class Matrix {
     private int[][] matrixData;
-    public static final int INT32_BYTE_SIZE = 4;
+    public static final int INT_32_BYTE_SIZE = 4;
 
     public Matrix(int[][] matrix) {
         this.matrixData = matrix;
@@ -91,7 +91,7 @@ public class Matrix {
     }
 
     public byte[] toByteBuffer() {
-        var buffer = ByteBuffer.allocate(getRowsCount() * getColumnsCount() * INT32_BYTE_SIZE);
+        var buffer = ByteBuffer.allocate(getRowsCount() * getColumnsCount() * INT_32_BYTE_SIZE);
         buffer.order(ByteOrder.nativeOrder());
         var intBuffer = buffer.asIntBuffer();
         for (var ints : matrixData) {
