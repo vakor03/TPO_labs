@@ -9,7 +9,7 @@ public class SimulationRunner implements Callable<SimulationResult> {
     private final long simulationDuration = 10000;
     private final int queueLength = 30;
     private final int consumersCount = 5;
-    private final int producerMaxSleepingTime = 40;
+    private final int producerMaxSleepingTime = 50;
     private final int consumerSleepingTime = 175;
     private final int loggerSleepingTime = 500;
 
