@@ -19,7 +19,7 @@ public class Main {
         WordCounter wordCounter = new WordCounter(threadsCount);
 
         long startTime = System.currentTimeMillis();
-        List<Integer> wordLengths = wordCounter.getAllWordLenghtsForkJoin(folder);
+        List<Integer> wordLengths = wordCounter.getAllWordLenghtsForkJoin(file);
         long totalTime = System.currentTimeMillis() - startTime;
 
         int totalLength = 0;

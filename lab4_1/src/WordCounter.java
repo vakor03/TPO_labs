@@ -1,3 +1,4 @@
+import java.io.File;
 import java.util.List;
 import java.util.concurrent.ForkJoinPool;
 
@@ -8,7 +9,7 @@ public class WordCounter {
         forkJoinPool = new ForkJoinPool(threadsCount);
     }
 
-    public List<Integer> getAllWordLenghtsForkJoin(Folder folder) {
-        return forkJoinPool.invoke(new FolderSearchTask(folder));
+    public List<Integer> getAllWordLenghtsForkJoin(File file) {
+        return forkJoinPool.invoke(new SearchTask(file));
     }
 }
