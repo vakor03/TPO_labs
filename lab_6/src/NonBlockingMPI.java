@@ -3,20 +3,15 @@ import mpi.Request;
 
 import static java.lang.System.exit;
 
-public class NonBlockingMPI implements IMatrixMultiplicationAlgorithm {
-
+public class NonBlockingMPI {
     private static final int TAG_MASTER = 1;
     private static final int TAG_WORKER = 2;
     private static final int MASTER_ID = 0;
 
-    private final String[] args;
+    public static void main(String[] args) {
+        Matrix matrixA = MatrixHelper.generateRandomMatrix(1000);
+        Matrix matrixB = MatrixHelper.generateRandomMatrix(1000);
 
-    public NonBlockingMPI(String[] args) {
-        this.args = args;
-    }
-
-    @Override
-    public Result multiply(Matrix matrixA, Matrix matrixB) {
         try{
             long startTime = System.currentTimeMillis();
             int rowsCount = matrixA.getRowsCount();
@@ -38,19 +33,20 @@ public class NonBlockingMPI implements IMatrixMultiplicationAlgorithm {
             if(taskID == MASTER_ID){
                 masterProcess(matrixA, matrixB, resultMatrix, workers);
 
-                return new Result(resultMatrix, (System.currentTimeMillis() - startTime));
+                System.out.println("Total time: " + (System.currentTimeMillis() - startTime) + " ms");
+                System.out.println("Matrix size: " + rowsCount + "x" + columnsCount);
+                System.out.println("Workers count: " + workers);
             }
             else {
                 workerProcess(columnsCount, rowsCount);
             }
-            return null;
         }
         finally {
             MPI.Finalize();
         }
     }
 
-    private void workerProcess(int columnsCount, int rowsCount  ) {
+    private static void workerProcess(int columnsCount, int rowsCount  ) {
         int[] startRowIndex = new int[1];
         int[] endRowIndex = new int[1];
         Request recStartIndex = MPI.COMM_WORLD.Irecv(startRowIndex,0,1, MPI.INT, 0, TAG_MASTER);
@@ -80,7 +76,7 @@ public class NonBlockingMPI implements IMatrixMultiplicationAlgorithm {
         MPI.COMM_WORLD.Isend(resultMatrixBuff,0, resultMatrixBuff.length, MPI.INT, 0, TAG_WORKER);
     }
 
-    private void masterProcess(Matrix matrix1, Matrix matrix2, Matrix resultMatrix, int workers) {
+    private static void masterProcess(Matrix matrix1, Matrix matrix2, Matrix resultMatrix, int workers) {
         int rowsForOneWorker = resultMatrix.getRowsCount() / workers;
         int extraRows = resultMatrix.getRowsCount() % workers;
 
