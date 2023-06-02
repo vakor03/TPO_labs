@@ -3,7 +3,7 @@ import java.io.IOException;
 import java.util.HashSet;
 
 public class Main {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         File file = new File("C:\\Projects\\ParrallelComputing\\TPO_labs\\lab4_1/TestFolder2");
         CommonWordCounter commonWordSearcher = new CommonWordCounter(2);
 

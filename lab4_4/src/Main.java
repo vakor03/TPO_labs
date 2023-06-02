@@ -5,9 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 
 public class Main {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         File file = new File("C:\\Projects\\ParrallelComputing\\TPO_labs\\lab4_1/TestFolder1");
-        Folder folder = Folder.loadFromDirectory(file);
         RequiredWordsChecker requiredWordsChecker = new RequiredWordsChecker(2);
 
         List<String> words = new ArrayList<>();
@@ -18,7 +17,7 @@ public class Main {
         words.add("Computer");
 
         long startTime = System.currentTimeMillis();
-        HashMap<String, List<String>> fileAndExistWords = requiredWordsChecker.findCommonWordsForkJoin(folder, words);
+        HashMap<String, List<String>> fileAndExistWords = requiredWordsChecker.findCommonWordsForkJoin(file, words);
         long time = System.currentTimeMillis() - startTime;
 
         int dontHaveRequiredWords = 0;

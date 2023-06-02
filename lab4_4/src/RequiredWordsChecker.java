@@ -1,3 +1,4 @@
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,11 +11,11 @@ public class RequiredWordsChecker {
         forkJoinPool = new ForkJoinPool(countThreads);
     }
 
-    public HashMap<String, List<String>> findCommonWordsForkJoin(Folder folder, List<String> requiredWords) {
+    public HashMap<String, List<String>> findCommonWordsForkJoin(File file, List<String> requiredWords) {
         List<String> wordsToLowerCase = new ArrayList<>();
         for (String word : requiredWords) {
             wordsToLowerCase.add(word.toLowerCase());
         }
-        return forkJoinPool.invoke(new FolderSearchTask(folder, wordsToLowerCase));
+        return forkJoinPool.invoke(new SearchTask(file, wordsToLowerCase));
     }
 }

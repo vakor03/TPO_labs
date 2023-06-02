@@ -1,9 +1,8 @@
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 public class Main {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         int[] threadsCount = {2, 4, 6, 8, 9};
         for (var count : threadsCount) {
             System.out.println("-------------------------");
@@ -12,10 +11,9 @@ public class Main {
         }
     }
 
-    private static void testResult(int threadsCount) throws IOException {
+    private static void testResult(int threadsCount) {
         File file = new File("C:\\Projects\\ParrallelComputing\\TPO_labs\\lab4_1/TestFolder1");
         System.out.println(file.getAbsolutePath());
-        Folder folder = Folder.loadFromDirectory(file);
         WordCounter wordCounter = new WordCounter(threadsCount);
 
         long startTime = System.currentTimeMillis();
