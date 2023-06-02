@@ -10,7 +10,7 @@ public class FoxAlgorithmForkJoin implements IMatrixMultiplicationAlgorithm {
     public Result multiply(Matrix matrixA, Matrix matrixB) {
         long startTime = System.currentTimeMillis();
 
-        return new Result(forkJoinPool.invoke(new FoxAlgorithmTask(matrixA, matrixB)),
-                System.currentTimeMillis() - startTime);
+        return new Result(forkJoinPool.invoke(new FoxAlgorithmTask(matrixA, matrixB)));
     }
 }
+
