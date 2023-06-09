@@ -1,9 +1,10 @@
-// Press Shift twice to open the Search Everywhere dialog and type `show whitespaces`,
-// then press Enter. You can now see whitespace characters in your code.
+import jdk.jshell.spi.ExecutionControl;
+
+import java.util.List;
 public class Main {
     public static void main(String[] args) {
-        NonSyncSymbPrinter nonSyncSymbPrinter = new NonSyncSymbPrinter('-', 100);
-        NonSyncSymbPrinter nonSyncSymbPrinter1 = new NonSyncSymbPrinter('|', 100);
+        NonSyncSymbPrinter nonSyncSymbPrinter = new NonSyncSymbPrinter('-', 500);
+        NonSyncSymbPrinter nonSyncSymbPrinter1 = new NonSyncSymbPrinter('|', 500);
         nonSyncSymbPrinter.start();
         nonSyncSymbPrinter1.start();
 
@@ -15,12 +16,23 @@ public class Main {
         }
 
         System.out.println();
-        Object lock = new Object();
-        SyncSymbPrinter syncSymbPrinter = new SyncSymbPrinter('-', 100, lock);
-        SyncSymbPrinter syncSymbPrinter1 = new SyncSymbPrinter('|', 100, lock);
-        syncSymbPrinter.start();
-        syncSymbPrinter1.start();
+//        char[] symbols = {'-', '|'};
+//        Synchronizer synchronizer = new Synchronizer(symbols);
+//        Thread[] threads = new Thread[symbols.length];
+//        for (int i = 0; i < symbols.length; i++) {
+//            threads[i] = new Thread(new SymbolPrinter(symbols[i], synchronizer, 5000));
+//        }
+//        for (Thread value : threads) {
+//            value.start();
+//        }
+//
+//        try {
+//            for (Thread thread : threads) {
+//                thread.join();
+//            }
+//        } catch (InterruptedException e) {
+//            throw new RuntimeException(e);
+//        }
 
     }
 }
-

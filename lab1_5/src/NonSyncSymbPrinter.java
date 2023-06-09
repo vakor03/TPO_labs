@@ -11,8 +11,9 @@ public class NonSyncSymbPrinter extends Thread {
     public void run() {
         for (int i = 0; i < elementsCount; i++) {
             System.out.print(symbol);
-            
+            if (i % 50 == 0 && i != 0) {
+                System.out.println();
+            }
         }
     }
 }
-
